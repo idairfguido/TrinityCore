@@ -55,9 +55,16 @@ private:
 
 TC_COMMON_API void stripLineInvisibleChars(std::string &src);
 
+<<<<<<< HEAD
 TC_COMMON_API int64 MoneyStringToMoney(const std::string& moneyString);
 
 TC_COMMON_API struct tm* localtime_r(const time_t* time, struct tm *result);
+=======
+TC_COMMON_API struct tm* localtime_r(time_t const* time, struct tm *result);
+TC_COMMON_API time_t LocalTimeToUTCTime(time_t time);
+TC_COMMON_API time_t GetLocalHourTimestamp(time_t time, uint8 hour, bool onlyAfterTime = true);
+TC_COMMON_API tm TimeBreakdown(time_t t);
+>>>>>>> 493fe066f6 (Core/Misc: Handle timezones for hour-specific events specifieds in worldserver.conf (#23540))
 
 TC_COMMON_API std::string secsToTimeString(uint64 timeInSecs, bool shortText = false, bool hoursOnly = false);
 TC_COMMON_API uint32 TimeStringToSecs(const std::string& timestring);
