@@ -43,7 +43,7 @@ CinematicMgr::~CinematicMgr()
 void CinematicMgr::BeginCinematic()
 {
     // Sanity check for active camera set
-    if (m_activeCinematicCameraId == 0)
+    if (!m_activeCinematic || m_activeCinematicCameraIndex >= int32(std::size(m_activeCinematic->Camera)))
         return;
 
     if (std::vector<FlyByCamera> const* flyByCameras = GetFlyByCameras(m_activeCinematicCameraId))
