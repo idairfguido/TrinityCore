@@ -216,6 +216,7 @@ public:
             return false;
 
         Player* player = handler->GetSession()->GetPlayer();
+<<<<<<< HEAD
 
         char* gridX = strtok((char*)args, " ");
         char* gridY = strtok(NULL, " ");
@@ -225,6 +226,9 @@ public:
             return false;
 
         uint32 mapId = id ? atoul(id) : player->GetMapId();
+=======
+        uint32 mapId = oMapId.value_or(player->GetMapId());
+>>>>>>> 770fbcca0c (Core/Misc: Replace boost::optional with std::optional (#25047))
 
         // center of grid
         float x = ((float)atof(gridX) - CENTER_GRID_ID + 0.5f) * SIZE_OF_GRIDS;
@@ -546,6 +550,7 @@ public:
             return false;
 
         Player* player = handler->GetSession()->GetPlayer();
+<<<<<<< HEAD
 
         char* goX = strtok((char*)args, " ");
         char* goY = strtok(NULL, " ");
@@ -563,6 +568,10 @@ public:
         uint32 mapId = id ? atoul(id) : player->GetMapId();
 
         if (goZ)
+=======
+        uint32 mapId = id.value_or(player->GetMapId());
+        if (z)
+>>>>>>> 770fbcca0c (Core/Misc: Replace boost::optional with std::optional (#25047))
         {
             z = (float)atof(goZ);
             if (!MapManager::IsValidMapCoord(mapId, x, y, z))
@@ -584,6 +593,7 @@ public:
             z = std::max(map->GetStaticHeight(PhasingHandler::GetEmptyPhaseShift(), x, y, MAX_HEIGHT), map->GetWaterLevel(PhasingHandler::GetEmptyPhaseShift(), x, y));
         }
 
+<<<<<<< HEAD
         // stop flight if need
         if (player->IsInFlight())
         {
@@ -596,6 +606,9 @@ public:
 
         player->TeleportTo(mapId, x, y, z, ort);
         return true;
+=======
+        return DoTeleport(handler, { x, y, *z, o.value_or(0.0f) }, mapId);
+>>>>>>> 770fbcca0c (Core/Misc: Replace boost::optional with std::optional (#25047))
     }
 
     template<typename T>
@@ -634,7 +647,19 @@ public:
 
     static bool HandleGoOffsetCommand(ChatHandler* handler, char const* args)
     {
+<<<<<<< HEAD
         if (!*args)
+=======
+        Position loc = handler->GetSession()->GetPlayer()->GetPosition();
+        loc.RelocateOffset({ dX, dY.value_or(0.0f), dZ.value_or(0.0f), dO.value_or(0.0f) });
+
+        return DoTeleport(handler, loc);
+    }
+
+    static bool HandleGoInstanceCommand(ChatHandler* handler, std::vector<std::string> const& labels)
+    {
+        if (labels.empty())
+>>>>>>> 770fbcca0c (Core/Misc: Replace boost::optional with std::optional (#25047))
             return false;
 
         Player* player = handler->GetSession()->GetPlayer();

@@ -19,10 +19,14 @@
 #define __UNIT_H
 
 #include "Object.h"
+<<<<<<< HEAD
 #include "EventProcessor.h"
 #include "FollowerReference.h"
 #include "FollowerRefManager.h"
 #include "HostileRefManager.h"
+=======
+#include "CombatManager.h"
+>>>>>>> 770fbcca0c (Core/Misc: Replace boost::optional with std::optional (#25047))
 #include "SpellAuraDefines.h"
 #include "ThreatManager.h"
 #include "Timer.h"

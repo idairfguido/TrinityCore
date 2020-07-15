@@ -544,6 +544,13 @@ class TC_GAME_API WorldObject : public Object, public WorldLocation
 
         bool isActiveObject() const { return m_isActive; }
         void setActive(bool isActiveObject);
+<<<<<<< HEAD
+=======
+        bool IsFarVisible() const { return m_isFarVisible; }
+        void SetFarVisible(bool on);
+        bool IsVisibilityOverridden() const { return m_visibilityDistanceOverride.has_value(); }
+        void SetVisibilityDistanceOverride(VisibilityDistanceType type);
+>>>>>>> 770fbcca0c (Core/Misc: Replace boost::optional with std::optional (#25047))
         void SetWorldObject(bool apply);
         bool IsPermanentWorldObject() const { return m_isWorldObject; }
         bool IsWorldObject() const;

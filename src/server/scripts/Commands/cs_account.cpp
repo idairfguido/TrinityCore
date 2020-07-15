@@ -134,7 +134,11 @@ public:
             return false;
         }
 
+<<<<<<< HEAD
         switch (sAccountMgr->CreateAccount(std::string(accountName), std::string(password), email))
+=======
+        switch (sAccountMgr->CreateAccount(accountName, password, email.value_or("")))
+>>>>>>> 770fbcca0c (Core/Misc: Replace boost::optional with std::optional (#25047))
         {
             case AccountOpResult::AOR_OK:
                 handler->PSendSysMessage(LANG_ACCOUNT_CREATED, accountName);
@@ -143,7 +147,11 @@ public:
                     TC_LOG_INFO("entities.player.character", "Account: %u (IP: %s) Character:[%s] (%s) created Account %s (Email: '%s')",
                         handler->GetSession()->GetAccountId(), handler->GetSession()->GetRemoteAddress().c_str(),
                         handler->GetSession()->GetPlayer()->GetName().c_str(), handler->GetSession()->GetPlayer()->GetGUID().ToString().c_str(),
+<<<<<<< HEAD
                         accountName, email.c_str());
+=======
+                        accountName.c_str(), email.value_or("").c_str());
+>>>>>>> 770fbcca0c (Core/Misc: Replace boost::optional with std::optional (#25047))
                 }
                 break;
             case AccountOpResult::AOR_NAME_TOO_LONG:
@@ -489,7 +497,11 @@ public:
 
         // This compares the old, current email to the entered email - however, only...
         if ((pwConfig == PW_EMAIL || (pwConfig == PW_RBAC && handler->HasPermission(rbac::RBAC_PERM_EMAIL_CONFIRM_FOR_PASS_CHANGE))) // ...if either PW_EMAIL or PW_RBAC with the Permission is active...
+<<<<<<< HEAD
             && !AccountMgr::CheckEmail(handler->GetSession()->GetAccountId(), std::string(emailConfirmation))) // ... and returns false if the comparison fails.
+=======
+            && !AccountMgr::CheckEmail(handler->GetSession()->GetAccountId(), confirmEmail.value_or(""))) // ... and returns false if the comparison fails.
+>>>>>>> 770fbcca0c (Core/Misc: Replace boost::optional with std::optional (#25047))
         {
             handler->SendSysMessage(LANG_COMMAND_WRONGEMAIL);
             sScriptMgr->OnFailedPasswordChange(handler->GetSession()->GetAccountId());
@@ -497,7 +509,11 @@ public:
             TC_LOG_INFO("entities.player.character", "Account: %u (IP: %s) Character:[%s] (%s) Tried to change password, but the entered email [%s] is wrong.",
                 handler->GetSession()->GetAccountId(), handler->GetSession()->GetRemoteAddress().c_str(),
                 handler->GetSession()->GetPlayer()->GetName().c_str(), handler->GetSession()->GetPlayer()->GetGUID().ToString().c_str(),
+<<<<<<< HEAD
                 emailConfirmation);
+=======
+                confirmEmail.value_or("").c_str());
+>>>>>>> 770fbcca0c (Core/Misc: Replace boost::optional with std::optional (#25047))
             return false;
         }
 

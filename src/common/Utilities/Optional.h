@@ -18,8 +18,16 @@
 #ifndef TrinityCore_Optional_h__
 #define TrinityCore_Optional_h__
 
+<<<<<<< HEAD
 #include <boost/optional.hpp>
 #include <boost/utility/in_place_factory.hpp>
+=======
+#include <optional>
+
+//! Optional helper class to wrap optional values within.
+template <class T>
+using Optional = std::optional<T>;
+>>>>>>> 770fbcca0c (Core/Misc: Replace boost::optional with std::optional (#25047))
 
  //! Optional helper class to wrap optional values within.
 template <typename T>
