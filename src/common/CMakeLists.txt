@@ -64,7 +64,6 @@ set_target_properties(common
 
 target_link_libraries(common
   PRIVATE
-    process
     trinity-core-interface
   PUBLIC
     boost
