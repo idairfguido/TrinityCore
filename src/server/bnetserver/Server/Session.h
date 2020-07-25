@@ -22,7 +22,6 @@
 #include "SslContext.h"
 #include "SslSocket.h"
 #include "Socket.h"
-#include "BigNumber.h"
 #include "QueryResult.h"
 #include "QueryCallbackProcessor.h"
 #include <boost/asio/ip/tcp.hpp>

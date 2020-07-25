@@ -253,26 +253,56 @@ bool ChangeGuid(std::string& str, uint32 n, PlayerDump::DumpGuidMap& guidMap, Ob
 
 std::string CreateDumpString(char const* tableName, QueryResult result)
 {
-    if (!tableName || !result) return "";
-    std::ostringstream ss;
-    ss << "INSERT INTO `" << tableName << "` VALUES (";
-    Field* fields = result->Fetch();
-    for (uint32 i = 0; i < result->GetFieldCount(); ++i)
+    if (!result)
+        return;
+
+    do
     {
-        if (i == 0) ss << '\'';
-        else ss << ", '";
+        std::ostringstream ss;
+        ss << "INSERT INTO `" << tableStruct.TableName << "` (";
+        for (auto itr = tableStruct.TableFields.begin(); itr != tableStruct.TableFields.end();)
+        {
+            ss << '`' << itr->FieldName << '`';
+            ++itr;
 
-        std::string s = fields[i].GetString();
-        CharacterDatabase.EscapeString(s);
-        ss << s;
+            if (itr != tableStruct.TableFields.end())
+                ss << ", ";
+        }
+        ss << ") VALUES (";
 
-        ss << '\'';
-    }
-    ss << ");";
-    return ss.str();
+        uint32 const fieldSize = uint32(tableStruct.TableFields.size());
+        Field* fields = result->Fetch();
+
+        for (uint32 i = 0; i < fieldSize;)
+        {
+            if (fields[i].IsNull())
+                ss << "'NULL'";
+            else
+            {
+                if (!tableStruct.TableFields[i].IsBinaryField)
+                {
+                    std::string s(fields[i].GetString());
+                    CharacterDatabase.EscapeString(s);
+                    ss << '\'' << s << '\'';
+                }
+                else
+                {
+                    std::vector<uint8> b(fields[i].GetBinary());
+                    ss << "0x" << ByteArrayToHexStr(b);
+                }
+            }
+
+            ++i;
+            if (i != fieldSize)
+                ss << ", ";
+        }
+        ss << ");";
+
+        trans.Append(ss.str().c_str());
+    } while (result->NextRow());
 }
 
-std::string PlayerDumpWriter::GenerateWhereStr(char const* field, ObjectGuid::LowType guid)
+inline std::string GenerateWhereStr(std::string const& field, ObjectGuid::LowType guid)
 {
     std::ostringstream wherestr;
     wherestr << field << " = '" << guid << '\'';

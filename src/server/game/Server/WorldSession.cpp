@@ -884,7 +884,12 @@ void WorldSession::ProcessQueryCallbacks()
         HandlePlayerLogin(reinterpret_cast<LoginQueryHolder*>(_charLoginCallback.get()));
 }
 
-void WorldSession::InitWarden(BigNumber* k)
+TransactionCallback& WorldSession::AddTransactionCallback(TransactionCallback&& callback)
+{
+    return _transactionCallbacks.AddCallback(std::move(callback));
+}
+
+void WorldSession::InitWarden(std::array<uint8, 40> const& k)
 {
     if (_os == "Win")
     {
