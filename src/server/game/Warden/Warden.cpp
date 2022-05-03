@@ -16,8 +16,8 @@
  */
 
 #include "Common.h"
-#include "WorldPacket.h"
-#include "WorldSession.h"
+#include "CryptoHash.h"
+#include "GameTime.h"
 #include "Log.h"
 #include "Opcodes.h"
 #include "ByteBuffer.h"
@@ -26,11 +26,13 @@
 #include "Warden.h"
 #include "AccountMgr.h"
 #include "WardenPackets.h"
+#include "World.h"
+#include "WorldPacket.h"
+#include "WorldSession.h"
+#include <charconv>
 
-#include <openssl/sha.h>
-
-Warden::Warden() : _session(NULL), _checkTimer(10000/*10 sec*/), _clientResponseTimer(0),
-                   _dataSent(false), _previousTimestamp(0), _module(NULL), _initialized(false)
+Warden::Warden() : _session(nullptr), _checkTimer(10 * IN_MILLISECONDS), _clientResponseTimer(0),
+                   _dataSent(false), _initialized(false)
 {
     memset(_inputKey, 0, sizeof(_inputKey));
     memset(_outputKey, 0, sizeof(_outputKey));
@@ -43,6 +45,14 @@ Warden::~Warden()
     delete _module;
     _module = NULL;
     _initialized = false;
+}
+
+void Warden::MakeModuleForClient()
+{
+    TC_LOG_DEBUG("warden", "Make module for client");
+    InitializeModuleForClient(_module.emplace());
+
+    _module->Id = Trinity::Crypto::MD5::GetDigestOf(_module->CompressedData, _module->CompressedSize);
 }
 
 void Warden::SendModuleToClient()
@@ -154,28 +164,19 @@ bool Warden::IsValidCheckSum(uint32 checksum, const uint8* data, const uint16 le
     }
 }
 
-struct keyData {
-    union
-    {
-        struct
-        {
-            uint8 bytes[20];
-        } bytes;
-
-        struct
-        {
-            uint32 ints[5];
-        } ints;
-    };
+union keyData
+{
+    std::array<uint8, 20> bytes;
+    std::array<uint32, 5> ints;
 };
 
 uint32 Warden::BuildChecksum(const uint8* data, uint32 length)
 {
     keyData hash;
-    SHA1(data, length, hash.bytes.bytes);
+    hash.bytes = Trinity::Crypto::SHA1::GetDigestOf(data, size_t(length));
     uint32 checkSum = 0;
     for (uint8 i = 0; i < 5; ++i)
-        checkSum = checkSum ^ hash.ints.ints[i];
+        checkSum = checkSum ^ hash.ints[i];
 
     return checkSum;
 }

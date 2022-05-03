@@ -250,21 +250,13 @@ OHYtKG3GK3GEcFDwZU2LPHq21EroUAdtRfbrJ4KW2yc8igtXKxTBYw==
 -----END RSA PRIVATE KEY-----
 )";
 
-std::unique_ptr<Trinity::Crypto::RSA> ConnectToRSA;
-
-uint8 const WherePacketHmac[] =
-{
-    0x2C, 0x1F, 0x1D, 0x80, 0xC3, 0x8C, 0x23, 0x64, 0xDA, 0x90, 0xCA, 0x8E, 0x2C, 0xFC, 0x0C, 0xCE,
-    0x09, 0xD3, 0x62, 0xF9, 0xF3, 0x8B, 0xBE, 0x9F, 0x19, 0xEF, 0x58, 0xA1, 0x1C, 0x34, 0x14, 0x41,
-    0x3F, 0x23, 0xFD, 0xD3, 0xE8, 0x14, 0xEC, 0x2A, 0xFD, 0x4F, 0x95, 0xBA, 0x30, 0x7E, 0x56, 0x5D,
-    0x83, 0x95, 0x81, 0x69, 0xB0, 0x5A, 0xB4, 0x9D, 0xA8, 0x55, 0xFF, 0xFC, 0xEE, 0x58, 0x0A, 0x2F
-};
+std::unique_ptr<Trinity::Crypto::RsaSignature> ConnectToRSA;
 }
 
 bool WorldPackets::Auth::ConnectTo::InitializeEncryption()
 {
-    std::unique_ptr<Trinity::Crypto::RSA> rsa = Trinity::make_unique<Trinity::Crypto::RSA>();
-    if (!rsa->LoadFromString(RSAPrivateKey, Trinity::Crypto::RSA::PrivateKey{}))
+    std::unique_ptr<Trinity::Crypto::RsaSignature> rsa = std::make_unique<Trinity::Crypto::RsaSignature>();
+    if (!rsa->LoadKeyFromString(RSAPrivateKey))
         return false;
 
     ConnectToRSA = std::move(rsa);
@@ -297,16 +289,15 @@ WorldPacket const* WorldPackets::Auth::ConnectTo::Write()
             break;
     }
 
-    uint32 type = Payload.Where.Type;
-    Trinity::Crypto::SHA256 hash;
-    hash.UpdateData(whereBuffer.contents(), whereBuffer.size());
-    hash.UpdateData(reinterpret_cast<uint8 const*>(&type), 4);
-    hash.UpdateData(reinterpret_cast<uint8 const*>(&Payload.Port), 2);
-    hash.Finalize();
+    ByteBuffer signBuffer;
+    signBuffer.append(whereBuffer);
+    signBuffer << uint32(Payload.Where.Type);
+    signBuffer << uint16(Payload.Port);
+    Trinity::Crypto::RsaSignature::SHA256 digestGenerator;
+    std::vector<uint8> signature;
+    ConnectToRSA->Sign(signBuffer.contents(), signBuffer.size(), digestGenerator, signature);
 
-    ConnectToRSA->Sign(hash.GetDigest(), Payload.Signature.data(), Trinity::Crypto::RSA::SHA256{});
-
-    _worldPacket.append(Payload.Signature.data(), Payload.Signature.size());
+    _worldPacket.append(signature.data(), signature.size());
     _worldPacket.append(whereBuffer);
     _worldPacket << uint16(Payload.Port);
     _worldPacket << uint32(Serial);
@@ -340,15 +331,16 @@ uint8 constexpr EnableEncryptionSeed[16] = { 0x90, 0x9C, 0xD0, 0x50, 0x5A, 0x2C,
 
 WorldPacket const* WorldPackets::Auth::EnableEncryption::Write()
 {
-    Trinity::Crypto::HMAC_SHA256 hash(EncryptionKey, 16);
-    hash.UpdateData(reinterpret_cast<uint8 const*>(&Enabled), 1);
-    hash.UpdateData(EnableEncryptionSeed, 16);
-    hash.Finalize();
+    std::array<uint8, 17> msg{};
+    msg[0] = Enabled ? 1 : 0;
+    std::copy_n(std::begin(EnableEncryptionSeed), std::size(EnableEncryptionSeed), &msg[1]);
 
-    _worldPacket.resize(_worldPacket.size() + ConnectToRSA->GetOutputSize());
+    Trinity::Crypto::RsaSignature::HMAC_SHA256 digestGenerator(EncryptionKey, 16);
+    std::vector<uint8> signature;
 
-    ConnectToRSA->Sign(hash.GetDigest(), _worldPacket.contents(), Trinity::Crypto::RSA::SHA256{});
+    ConnectToRSA->Sign(msg, digestGenerator, signature);
 
+    _worldPacket.append(signature.data(), signature.size());
     _worldPacket.WriteBit(Enabled);
     _worldPacket.FlushBits();
 
