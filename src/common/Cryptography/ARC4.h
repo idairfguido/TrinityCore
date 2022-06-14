@@ -41,6 +41,10 @@ namespace Crypto
             template <typename Container>
             void UpdateData(Container& c) { UpdateData(advstd::data(c), advstd::size(c)); }
         private:
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+            OSSL_LIB_CTX* _libCtx;
+            OSSL_PROVIDER* _legacyProvider;
+#endif
             EVP_CIPHER_CTX* _ctx;
     };
 }
