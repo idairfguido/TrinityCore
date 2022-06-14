@@ -33,12 +33,14 @@
 #include "IPLocation.h"
 #include "LoginRESTService.h"
 #include "MySQLThreading.h"
+#include "OpenSSLCrypto.h"
 #include "ProcessPriority.h"
 #include "RealmList.h"
 #include "SessionManager.h"
 #include "SslContext.h"
 #include "Util.h"
 #include <boost/asio/signal_set.hpp>
+#include <boost/dll/runtime_symbol_info.hpp>
 #include <boost/program_options.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <google/protobuf/stubs/common.h>
@@ -125,10 +127,12 @@ int main(int argc, char** argv)
         }
     );
 
-    // Seed the OpenSSL's PRNG here.
-    // That way it won't auto-seed when calling BigNumber::SetRand and slow down the first world login
-    BigNumber seed;
-    seed.SetRand(16 * 8);
+    for (std::string const& key : overriddenKeys)
+        TC_LOG_INFO("server.authserver", "Configuration field '%s' was overridden with environment variable.", key.c_str());
+
+    OpenSSLCrypto::threadsSetup(boost::dll::program_location().remove_filename());
+
+    std::shared_ptr<void> opensslHandle(nullptr, [](void*) { OpenSSLCrypto::threadsCleanup(); });
 
     // bnetserver PID file creation
     std::string pidFile = sConfigMgr->GetStringDefault("PidFile", "");
