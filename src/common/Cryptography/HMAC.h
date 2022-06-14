@@ -125,8 +125,8 @@ namespace Impl
 
             void Finalize()
             {
-                uint32 length = 0;
-                int result = HMAC_Final(_ctx, _digest.data(), &length);
+                size_t length = DIGEST_LENGTH;
+                int result = EVP_DigestSignFinal(_ctx, _digest.data(), &length);
                 ASSERT(result == 1);
                 ASSERT(length == DIGEST_LENGTH);
                 HMACImpl::DestroyCTX(_ctx);
