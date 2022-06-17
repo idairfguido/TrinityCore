@@ -19,6 +19,7 @@
 #include <openssl/objects.h>
 #include <openssl/rsa.h>
 #include <array>
+#include <memory>
 #include <string>
 #include <type_traits>
 
@@ -31,41 +32,71 @@ namespace Crypto
 class TC_COMMON_API RSA
 {
 public:
-    struct PublicKey {};
-    struct PrivateKey {};
-
-    struct NoPadding : std::integral_constant<int32, RSA_NO_PADDING> {};
-    struct PKCS1Padding : std::integral_constant<int32, RSA_PKCS1_PADDING> {};
-
-    struct SHA256 : std::integral_constant<int32, NID_sha256> {};
-
-    RSA();
-    RSA(RSA&& rsa);
-    ~RSA();
-
-    template <typename KeyTag>
-    bool LoadFromFile(std::string const& fileName, KeyTag);
-
-    template <typename KeyTag>
-    bool LoadFromString(std::string const& keyPem, KeyTag);
-
-    uint32 GetOutputSize() const { return uint32(RSA_size(_rsa)); }
-    BigNumber GetModulus() const;
-
-    template <typename KeyTag, typename PaddingTag>
-    bool Encrypt(uint8 const* data, std::size_t dataLength, uint8* output, KeyTag, PaddingTag)
+    class TC_COMMON_API DigestGenerator
     {
-        return Encrypt<KeyTag>(data, dataLength, output, PaddingTag::value);
-    }
+    public:
+        struct EVP_MD_Deleter
+        {
+            void operator()(EVP_MD* md) const;
+        };
 
-    template <std::size_t N, typename KeyTag, typename PaddingTag>
-    bool Encrypt(std::array<uint8, N> const& data, uint8* output, KeyTag, PaddingTag)
+        virtual ~DigestGenerator() = default;
+        virtual std::unique_ptr<EVP_MD, EVP_MD_Deleter> GetGenerator() const = 0;
+
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+        virtual OSSL_LIB_CTX* GetLib() const = 0;
+        virtual std::unique_ptr<OSSL_PARAM[]> GetParams() const = 0;
+#else
+        virtual void PostInitCustomizeContext(EVP_MD_CTX* ctx) = 0;
+#endif
+    };
+
+    class TC_COMMON_API SHA256 : public DigestGenerator
     {
-        return Encrypt<KeyTag>(data.data(), data.size(), output, PaddingTag::value);
-    }
+    public:
+        std::unique_ptr<EVP_MD, EVP_MD_Deleter> GetGenerator() const override;
 
-    template <typename HashTag>
-    bool Sign(uint8 const* dataHash, std::size_t dataHashLength, uint8* output, HashTag)
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+        OSSL_LIB_CTX* GetLib() const override;
+        std::unique_ptr<OSSL_PARAM[]> GetParams() const override;
+#else
+        void PostInitCustomizeContext(EVP_MD_CTX* ctx) override;
+#endif
+    };
+
+    class TC_COMMON_API HMAC_SHA256 : public DigestGenerator
+    {
+    public:
+        explicit HMAC_SHA256(uint8 const* key, size_t keyLength) : _key(key), _keyLength(keyLength) { }
+
+        std::unique_ptr<EVP_MD, EVP_MD_Deleter> GetGenerator() const override;
+
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+        OSSL_LIB_CTX* GetLib() const override;
+        std::unique_ptr<OSSL_PARAM[]> GetParams() const override;
+#else
+        void PostInitCustomizeContext(EVP_MD_CTX* ctx) override;
+#endif
+
+    private:
+        uint8 const* _key;
+        size_t _keyLength;
+    };
+
+    RsaSignature();
+    RsaSignature(RsaSignature const& other);
+    RsaSignature(RsaSignature&& other) noexcept;
+    ~RsaSignature();
+
+    RsaSignature& operator=(RsaSignature const& right);
+    RsaSignature& operator=(RsaSignature&& right) noexcept;
+
+    bool LoadKeyFromFile(std::string const& fileName);
+
+    bool LoadKeyFromString(std::string const& keyPem);
+
+    template <std::size_t N>
+    bool Sign(std::array<uint8, N> const& message, DigestGenerator& generator, std::vector<uint8>& output)
     {
         return Sign(HashTag::value, dataHash, dataHashLength, output);
     }
