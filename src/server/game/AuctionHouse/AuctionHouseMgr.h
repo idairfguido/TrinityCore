@@ -127,6 +127,127 @@ struct AuctionSearchFilters
     std::array<SubclassFilter, MAX_ITEM_CLASS> Classes = { };
 };
 
+struct AuctionsBucketKey
+{
+    AuctionsBucketKey() = default;
+    AuctionsBucketKey(uint32 itemId, uint16 itemLevel, uint16 battlePetSpeciesId, uint16 suffixItemNameDescriptionId)
+        : ItemId(itemId), ItemLevel(itemLevel), BattlePetSpeciesId(battlePetSpeciesId), SuffixItemNameDescriptionId(suffixItemNameDescriptionId) { }
+    AuctionsBucketKey(WorldPackets::AuctionHouse::AuctionBucketKey const& key);
+
+    uint32 ItemId;
+    uint16 ItemLevel;
+    uint16 BattlePetSpeciesId;
+    uint16 SuffixItemNameDescriptionId;
+
+    bool operator==(AuctionsBucketKey const& right) const
+    {
+        return ItemId == right.ItemId
+            && ItemLevel == right.ItemLevel
+            && BattlePetSpeciesId == right.BattlePetSpeciesId
+            && SuffixItemNameDescriptionId == right.SuffixItemNameDescriptionId;
+    }
+
+    bool operator!=(AuctionsBucketKey const& right) const
+    {
+        return !(*this == right);
+    }
+
+    static std::size_t Hash(AuctionsBucketKey const& bucket);
+    static AuctionsBucketKey ForItem(Item* item);
+    static AuctionsBucketKey ForCommodity(ItemTemplate const* itemTemplate);
+};
+
+bool operator<(AuctionsBucketKey const& left, AuctionsBucketKey const& right);
+
+namespace std
+{
+    template<>
+    struct hash<AuctionsBucketKey>
+    {
+        size_t operator()(AuctionsBucketKey const& key) const noexcept
+        {
+            return AuctionsBucketKey::Hash(key);
+        }
+    };
+}
+
+struct AuctionPosting;
+
+struct AuctionsBucketData
+{
+    AuctionsBucketKey Key;
+
+    // filter helpers
+    uint8 ItemClass = 0;
+    uint8 ItemSubClass = 0;
+    uint8 InventoryType = 0;
+    AuctionHouseFilterMask QualityMask = AuctionHouseFilterMask::None;
+    std::array<uint32, MAX_ITEM_QUALITY> QualityCounts = { };
+    uint64 MinPrice = 0; // for sort
+    std::array<std::pair<uint32, uint32>, 4> ItemModifiedAppearanceId = { }; // for uncollected search
+    uint8 RequiredLevel = 0; // for usable search
+    uint8 SortLevel = 0;
+    uint8 MinBattlePetLevel = 0;
+    uint8 MaxBattlePetLevel = 0;
+    std::array<std::wstring, TOTAL_LOCALES> FullName = { };
+
+    std::vector<AuctionPosting*> Auctions;
+
+    void BuildBucketInfo(WorldPackets::AuctionHouse::BucketInfo* bucketInfo, Player* player) const;
+
+    class Sorter;
+};
+
+enum class AuctionPostingServerFlag : uint8
+{
+    None        = 0x0,
+    GmLogBuyer  = 0x1  // write transaction to gm log file for buyer (optimization flag - avoids querying database for offline player permissions)
+};
+
+DEFINE_ENUM_FLAG(AuctionPostingServerFlag);
+
+// This structure represents the result of a single C_AuctionHouse.PostItem/PostCommodity call
+struct AuctionPosting
+{
+    uint32 Id = 0;
+    AuctionsBucketData* Bucket = nullptr;
+
+    std::vector<Item*> Items;
+    ObjectGuid Owner;
+    ObjectGuid OwnerAccount;
+    ObjectGuid Bidder;
+    uint64 MinBid = 0;
+    uint64 BuyoutOrUnitPrice = 0;
+    uint64 Deposit = 0;
+    uint64 BidAmount = 0;
+    SystemTimePoint StartTime = SystemTimePoint::min();
+    SystemTimePoint EndTime = SystemTimePoint::min();
+    EnumFlag<AuctionPostingServerFlag> ServerFlags = AuctionPostingServerFlag::None;
+
+    GuidUnorderedSet BidderHistory;
+
+    bool IsCommodity() const;
+    uint32 GetTotalItemCount() const;
+    void BuildAuctionItem(WorldPackets::AuctionHouse::AuctionItem* auctionItem, bool alwaysSendItem, bool sendKey, bool censorServerInfo, bool censorBidInfo) const;
+    static uint64 CalculateMinIncrement(uint64 currentBid);
+    uint64 CalculateMinIncrement() const { return CalculateMinIncrement(BidAmount); }
+
+    class Sorter;
+};
+
+struct CommodityQuote
+{
+    uint64 TotalPrice = 0;
+    uint32 Quantity = 0;
+    TimePoint ValidTo = TimePoint::min();
+};
+
+struct AuctionThrottleResult
+{
+    Milliseconds DelayUntilNext;
+    bool Throttled;
+};
+
 //this class is used as auctionhouse instance
 class TC_GAME_API AuctionHouseObject
 {

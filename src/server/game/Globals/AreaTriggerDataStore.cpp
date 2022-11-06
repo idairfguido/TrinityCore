@@ -24,6 +24,26 @@
 #include "Timer.h"
 #include <cmath>
 
+bool operator==(AreaTriggerId const& left, AreaTriggerId const& right)
+{
+    return left.Id == right.Id && left.IsServerSide == right.IsServerSide;
+}
+
+namespace std
+{
+    template <>
+    struct hash<AreaTriggerId>
+    {
+        std::size_t operator()(AreaTriggerId const& value) const noexcept
+        {
+            size_t hashVal = 0;
+            Trinity::hash_combine(hashVal, value.Id);
+            Trinity::hash_combine(hashVal, value.IsServerSide);
+            return hashVal;
+        }
+    };
+}
+
 namespace
 {
     std::unordered_map<uint32, AreaTriggerTemplate> _areaTriggerTemplateStore;

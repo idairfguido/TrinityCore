@@ -54,6 +54,7 @@ namespace Movement
     struct MoveSplineInitArgs
     {
         explicit MoveSplineInitArgs(size_t path_capacity = 16);
+        MoveSplineInitArgs(MoveSplineInitArgs&& args) noexcept;
         ~MoveSplineInitArgs();
 
         PointsArray path;
