@@ -30,12 +30,20 @@ bool WorldPackets::Item::ItemBonusInstanceData::operator==(ItemBonusInstanceData
     return std::is_permutation(BonusListIDs.begin(), BonusListIDs.end(), r.BonusListIDs.begin());
 }
 
-void WorldPackets::Item::ItemInstance::Initialize(::Item const* item)
+bool ItemMod::operator==(ItemMod const& r) const = default;
+
+bool ItemModList::operator==(ItemModList const& r) const
 {
-    ItemID               = item->GetEntry();
-    RandomPropertiesSeed = item->GetItemSuffixFactor();
-    RandomPropertiesID   = item->GetItemRandomPropertyId();
-    std::vector<uint32> const& bonusListIds = item->GetDynamicValues(ITEM_DYNAMIC_FIELD_BONUSLIST_IDS);
+    if (Values.size() != r.Values.size())
+        return false;
+
+    return std::is_permutation(Values.begin(), Values.end(), r.Values.begin());
+}
+
+void ItemInstance::Initialize(::Item const* item)
+{
+    ItemID = item->GetEntry();
+    std::vector<int32> const& bonusListIds = item->GetBonusListIDs();
     if (!bonusListIds.empty())
     {
         ItemBonus = boost::in_place();
@@ -114,24 +122,11 @@ void WorldPackets::Item::ItemInstance::Initialize(::VoidStorageItem const* voidI
     }
 }
 
-bool WorldPackets::Item::ItemInstance::operator==(ItemInstance const& r) const
-{
-    if (ItemID != r.ItemID || RandomPropertiesID != r.RandomPropertiesID || RandomPropertiesSeed != r.RandomPropertiesSeed)
-        return false;
+bool ItemInstance::operator==(ItemInstance const& r) const = default;
 
-    if (ItemBonus.is_initialized() != r.ItemBonus.is_initialized() || Modifications.is_initialized() != r.Modifications.is_initialized())
-        return false;
+bool ItemBonusKey::operator==(ItemBonusKey const& right) const = default;
 
-    if (Modifications.is_initialized() && *Modifications != *r.Modifications)
-        return false;
-
-    if (ItemBonus.is_initialized() && *ItemBonus != *r.ItemBonus)
-        return false;
-
-    return true;
-}
-
-ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::Item::ItemBonusInstanceData const& itemBonusInstanceData)
+ByteBuffer& operator<<(ByteBuffer& data, ItemBonuses const& itemBonusInstanceData)
 {
     data << uint8(itemBonusInstanceData.Context);
     data << uint32(itemBonusInstanceData.BonusListIDs.size());

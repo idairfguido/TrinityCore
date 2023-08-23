@@ -60,7 +60,7 @@ public:
         EnumClassFlag<PhaseFlags> Flags;
         int32 References;
         std::vector<Condition*> const* AreaConditions;
-        bool operator<(PhaseRef const& right) const { return Id < right.Id; }
+        std::strong_ordering operator<=>(PhaseRef const& right) const { return Id <=> right.Id; }
         bool operator==(PhaseRef const& right) const { return Id == right.Id; }
     };
     struct VisibleMapIdRef

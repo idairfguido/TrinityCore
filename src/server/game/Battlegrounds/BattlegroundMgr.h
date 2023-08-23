@@ -152,7 +152,17 @@ class TC_GAME_API BattlegroundMgr
         typedef std::map<BattlegroundTypeId, BattlegroundData> BattlegroundDataContainer;
         BattlegroundDataContainer bgDataStore;
 
-        BattlegroundQueue m_BattlegroundQueues[MAX_BATTLEGROUND_QUEUE_TYPES];
+        std::map<BattlegroundQueueTypeId, BattlegroundQueue> m_BattlegroundQueues;
+        std::map<BattlegroundQueueTypeId, BGFreeSlotQueueContainer> m_BGFreeSlotQueue;
+
+        struct ScheduledQueueUpdate
+        {
+            uint32 ArenaMatchmakerRating;
+            BattlegroundQueueTypeId QueueId;
+            BattlegroundBracketId BracketId;
+
+            bool operator==(ScheduledQueueUpdate const& right) const = default;
+        };
 
         std::vector<uint64> m_QueueUpdateScheduler;
         uint32 m_NextRatedArenaUpdate;

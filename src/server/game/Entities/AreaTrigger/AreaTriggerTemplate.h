@@ -70,6 +70,14 @@ enum AreaTriggerActionUserTypes
     AREATRIGGER_ACTION_USER_MAX    = 6
 };
 
+struct AreaTriggerId
+{
+    uint32 Id = 0;
+    bool IsServerSide = false;
+
+    friend bool operator==(AreaTriggerId const& left, AreaTriggerId const& right) = default;
+};
+
 struct AreaTriggerAction
 {
     uint32 Param;

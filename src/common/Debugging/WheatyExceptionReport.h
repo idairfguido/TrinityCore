@@ -6,6 +6,7 @@
 #include <winnt.h>
 #include <winternl.h>
 #include <dbghelp.h>
+#include <compare>
 #include <set>
 #include <stdlib.h>
 #include <stack>
@@ -99,11 +100,8 @@ struct SymbolPair
         _offset = offset;
     }
 
-    bool operator<(const SymbolPair& other) const
-    {
-        return _offset < other._offset ||
-              (_offset == other._offset && _type < other._type);
-    }
+    bool operator==(SymbolPair const& other) const = default;
+    std::strong_ordering operator<=>(SymbolPair const& other) const = default;
 
     DWORD _type;
     DWORD_PTR _offset;

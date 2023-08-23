@@ -84,6 +84,25 @@ class TC_COMMON_API BigNumber
             return t %= bn;
         }
 
+        BigNumber& operator<<=(int n);
+        BigNumber operator<<(int n) const
+        {
+            BigNumber t(*this);
+            return t <<= n;
+        }
+
+        int32 CompareTo(BigNumber const& bn) const;
+        bool operator==(BigNumber const& bn) const { return CompareTo(bn) == 0; }
+        std::strong_ordering operator<=>(BigNumber const& other) const
+        {
+            int32 cmp = CompareTo(other);
+            if (cmp < 0)
+                return std::strong_ordering::less;
+            if (cmp > 0)
+                return std::strong_ordering::greater;
+            return std::strong_ordering::equal;
+        }
+
         bool IsZero() const;
         bool IsNegative() const;
 

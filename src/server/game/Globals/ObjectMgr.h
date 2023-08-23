@@ -533,8 +533,64 @@ typedef std::unordered_map<uint32, TrinityString> TrinityStringContainer;
 
 typedef std::multimap<uint32, uint32> QuestRelations; // unit/go -> quest
 typedef std::multimap<uint32, uint32> QuestRelationsReverse; // quest -> unit/go
-typedef std::pair<QuestRelations::const_iterator, QuestRelations::const_iterator> QuestRelationBounds;
-typedef std::pair<QuestRelationsReverse::const_iterator, QuestRelationsReverse::const_iterator> QuestRelationReverseBounds;
+
+struct QuestRelationResult
+{
+    public:
+        struct Iterator
+        {
+            public:
+                using iterator_category = std::forward_iterator_tag;
+                using value_type = QuestRelations::mapped_type;
+                using pointer = value_type const*;
+                using reference = value_type const&;
+                using difference_type = void;
+
+                Iterator(QuestRelations::const_iterator it, QuestRelations::const_iterator end, bool onlyActive)
+                    : _it(it), _end(end), _onlyActive(onlyActive)
+                {
+                    skip();
+                }
+
+                bool operator==(Iterator const& other) const { return _it == other._it; }
+
+                Iterator& operator++() { ++_it; skip(); return *this; }
+                Iterator operator++(int) { Iterator t = *this; ++*this; return t; }
+
+                value_type operator*() const { return _it->second; }
+
+            private:
+                void skip() { if (_onlyActive) _skip(); }
+                void _skip();
+
+                QuestRelations::const_iterator _it, _end;
+                bool _onlyActive;
+        };
+
+        QuestRelationResult() : _onlyActive(false) {}
+        QuestRelationResult(std::pair<QuestRelations::const_iterator, QuestRelations::const_iterator> range, bool onlyActive)
+            : _begin(range.first), _end(range.second), _onlyActive(onlyActive) {}
+
+        Iterator begin() const { return { _begin, _end, _onlyActive }; }
+        Iterator end() const { return { _end, _end, _onlyActive }; }
+
+        bool HasQuest(uint32 questId) const;
+
+    private:
+        QuestRelations::const_iterator _begin, _end;
+        bool _onlyActive;
+};
+
+typedef std::multimap<int32, uint32> ExclusiveQuestGroups; // exclusiveGroupId -> quest
+typedef std::pair<ExclusiveQuestGroups::const_iterator, ExclusiveQuestGroups::const_iterator> ExclusiveQuestGroupsBounds;
+
+enum class PlayerCreateMode : int8
+{
+    Normal  = 0,
+    NPE     = 1,
+
+    Max
+};
 
 struct PlayerCreateInfoItem
 {

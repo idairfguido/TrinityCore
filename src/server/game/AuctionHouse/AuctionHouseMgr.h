@@ -139,18 +139,7 @@ struct AuctionsBucketKey
     uint16 BattlePetSpeciesId;
     uint16 SuffixItemNameDescriptionId;
 
-    bool operator==(AuctionsBucketKey const& right) const
-    {
-        return ItemId == right.ItemId
-            && ItemLevel == right.ItemLevel
-            && BattlePetSpeciesId == right.BattlePetSpeciesId
-            && SuffixItemNameDescriptionId == right.SuffixItemNameDescriptionId;
-    }
-
-    bool operator!=(AuctionsBucketKey const& right) const
-    {
-        return !(*this == right);
-    }
+    bool operator==(AuctionsBucketKey const& right) const = default;
 
     static std::size_t Hash(AuctionsBucketKey const& bucket);
     static AuctionsBucketKey ForItem(Item* item);

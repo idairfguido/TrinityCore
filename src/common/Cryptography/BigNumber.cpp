@@ -120,7 +120,18 @@ BigNumber BigNumber::operator%=(BigNumber const& bn)
     return *this;
 }
 
-BigNumber BigNumber::Exp(BigNumber const& bn)
+BigNumber& BigNumber::operator<<=(int n)
+{
+    BN_lshift(_bn, _bn, n);
+    return *this;
+}
+
+int32 BigNumber::CompareTo(BigNumber const& bn) const
+{
+    return BN_cmp(_bn, bn._bn);
+}
+
+BigNumber BigNumber::Exp(BigNumber const& bn) const
 {
     BigNumber ret;
     BN_CTX *bnctx;
