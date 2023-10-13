@@ -26,6 +26,7 @@
 #include "SpellMgr.h"
 #include "TemporarySummon.h"
 
+<<<<<<< HEAD
 //==============================================================
 //================= ThreatCalcHelper ===========================
 //==============================================================
@@ -34,6 +35,45 @@
 float ThreatCalcHelper::calcThreat(Unit* hatedUnit, Unit* /*hatingUnit*/, float threat, SpellSchoolMask schoolMask, SpellInfo const* threatSpell /*= nullptr*/)
 {
     if (threatSpell)
+=======
+const CompareThreatLessThan ThreatManager::CompareThreat;
+
+class ThreatManager::Heap : public boost::heap::fibonacci_heap<ThreatReference const*, boost::heap::compare<CompareThreatLessThan>>
+{
+};
+
+void ThreatReference::AddThreat(float amount)
+{
+    if (amount == 0.0f)
+        return;
+    _baseAmount = std::max<float>(_baseAmount + amount, 0.0f);
+    if (amount > 0.0f)
+        HeapNotifyIncreased();
+    else
+        HeapNotifyDecreased();
+    _mgr._needClientUpdate = true;
+}
+
+void ThreatReference::ScaleThreat(float factor)
+{
+    if (factor == 1.0f)
+        return;
+    _baseAmount *= factor;
+    if (factor > 1.0f)
+        HeapNotifyIncreased();
+    else
+        HeapNotifyDecreased();
+    _mgr._needClientUpdate = true;
+}
+
+void ThreatReference::UpdateOffline()
+{
+    bool const shouldBeOffline = ShouldBeOffline();
+    if (shouldBeOffline == IsOffline())
+        return;
+
+    if (shouldBeOffline)
+>>>>>>> 17c69368a3 (Dep/Boost: Drop windows boost hacks (#29358))
     {
         if (SpellThreatEntry const*  threatEntry = sSpellMgr->GetSpellThreatEntry(threatSpell->Id))
             if (threatEntry->pctMod != 1.0f)

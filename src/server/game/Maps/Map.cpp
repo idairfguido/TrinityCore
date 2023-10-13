@@ -50,12 +50,15 @@
 #include "World.h"
 #include "WorldSession.h"
 
+<<<<<<< HEAD
 u_map_magic MapMagic        = { {'M','A','P','S'} };
 u_map_magic MapVersionMagic = { {'v','1','.','9'} };
 u_map_magic MapAreaMagic    = { {'A','R','E','A'} };
 u_map_magic MapHeightMagic  = { {'M','H','G','T'} };
 u_map_magic MapLiquidMagic  = { {'M','L','I','Q'} };
 
+=======
+>>>>>>> 17c69368a3 (Dep/Boost: Drop windows boost hacks (#29358))
 #define DEFAULT_GRID_EXPIRY     300
 #define MAX_GRID_LOAD_TIME      50
 #define MAX_CREATURE_ATTACK_RADIUS  (45.0f * sWorld->getRate(RATE_CREATURE_AGGRO))
@@ -64,7 +67,25 @@ GridState* si_GridStates[MAX_GRID_STATE];
 
 
 ZoneDynamicInfo::ZoneDynamicInfo() : MusicId(0), DefaultWeather(nullptr), WeatherId(WEATHER_STATE_FINE),
+<<<<<<< HEAD
     WeatherGrade(0.0f), OverrideLightId(0), LightFadeInTime(0) { }
+=======
+    Intensity(0.0f) { }
+
+RespawnInfo::~RespawnInfo() = default;
+
+struct RespawnInfoWithHandle;
+struct RespawnListContainer : boost::heap::fibonacci_heap<RespawnInfoWithHandle*, boost::heap::compare<CompareRespawnInfo>>
+{
+};
+
+struct RespawnInfoWithHandle : RespawnInfo
+{
+    explicit RespawnInfoWithHandle(RespawnInfo const& other) : RespawnInfo(other) { }
+
+    RespawnListContainer::handle_type handle;
+};
+>>>>>>> 17c69368a3 (Dep/Boost: Drop windows boost hacks (#29358))
 
 Map::~Map()
 {
