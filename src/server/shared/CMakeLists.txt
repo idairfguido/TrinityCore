@@ -39,6 +39,13 @@ target_include_directories(shared
   PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR})
 
+<<<<<<< HEAD
+=======
+set_target_properties(shared
+  PROPERTIES
+    DEFINE_SYMBOL TRINITY_API_EXPORT_SHARED)
+
+>>>>>>> ab5fab5ee9 (Build: Fixed CMake 3.30 FindBoost deprecation warning)
 target_link_libraries(shared
   PRIVATE
     trinity-core-interface

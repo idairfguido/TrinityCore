@@ -58,6 +58,13 @@ target_include_directories(common
   PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR})
 
+<<<<<<< HEAD
+=======
+set_target_properties(common
+  PROPERTIES
+    DEFINE_SYMBOL TRINITY_API_EXPORT_COMMON)
+
+>>>>>>> ab5fab5ee9 (Build: Fixed CMake 3.30 FindBoost deprecation warning)
 target_link_libraries(common
   PRIVATE
     process

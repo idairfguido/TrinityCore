@@ -8,9 +8,24 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+set(BOOST_SEARCH_HINTS)
 if(WIN32)
   if(DEFINED ENV{BOOST_ROOT})
     set(BOOST_ROOT $ENV{BOOST_ROOT})
+  endif()
+  if(DEFINED BOOST_ROOT AND MSVC)
+    # insert a dot (.) character before last digit of MSVC_TOOLSET_VERSION
+    # turn 143 into 14.3
+    string(LENGTH "${MSVC_TOOLSET_VERSION}" _BOOST_MSVC_TOOLSET_VERSION_LENGTH)
+    math(EXPR _BOOST_MSVC_TOOLSET_VERSION_LENGTH "${_BOOST_MSVC_TOOLSET_VERSION_LENGTH} - 1" OUTPUT_FORMAT DECIMAL)
+    string(SUBSTRING "${MSVC_TOOLSET_VERSION}" 0 ${_BOOST_MSVC_TOOLSET_VERSION_LENGTH} _BOOST_MSVC_TOOLSET_VERSION_MAJOR)
+    string(SUBSTRING "${MSVC_TOOLSET_VERSION}" ${_BOOST_MSVC_TOOLSET_VERSION_LENGTH} -1 _BOOST_MSVC_TOOLSET_VERSION_MINOR)
+
+    set(BOOST_SEARCH_HINTS "${BOOST_ROOT}/lib${PLATFORM}-msvc-${_BOOST_MSVC_TOOLSET_VERSION_MAJOR}.${_BOOST_MSVC_TOOLSET_VERSION_MINOR}/cmake")
+
+    unset(_BOOST_MSVC_TOOLSET_VERSION_LENGTH)
+    unset(_BOOST_MSVC_TOOLSET_VERSION_MAJOR)
+    unset(_BOOST_MSVC_TOOLSET_VERSION_MINOR)
   endif()
 
   set(Boost_USE_STATIC_LIBS        ON)
@@ -18,10 +33,13 @@ if(WIN32)
   set(Boost_USE_STATIC_RUNTIME     OFF)
 endif()
 
+<<<<<<< HEAD
 set(Boost_NO_WARN_NEW_VERSIONS ON)
 
 include (CheckCXXSourceCompiles)
 
+=======
+>>>>>>> ab5fab5ee9 (Build: Fixed CMake 3.30 FindBoost deprecation warning)
 if (WIN32)
   # On windows the requirements are higher according to the wiki.
   set(BOOST_REQUIRED_VERSION 1.78)
@@ -29,7 +47,22 @@ else()
   set(BOOST_REQUIRED_VERSION 1.74)
 endif()
 
+<<<<<<< HEAD
 find_package(Boost ${BOOST_REQUIRED_VERSION} REQUIRED system filesystem program_options iostreams regex)
+=======
+find_package(Boost ${BOOST_REQUIRED_VERSION}
+  REQUIRED
+  COMPONENTS 
+    system
+    filesystem
+    program_options
+    iostreams
+    regex
+    locale
+  CONFIG
+  HINTS
+    ${BOOST_SEARCH_HINTS})
+>>>>>>> ab5fab5ee9 (Build: Fixed CMake 3.30 FindBoost deprecation warning)
 
 if(NOT Boost_FOUND)
   if(NOT DEFINED ENV{BOOST_ROOT} AND NOT DEFINED Boost_DIR AND NOT DEFINED BOOST_ROOT AND NOT DEFINED BOOSTROOT)
