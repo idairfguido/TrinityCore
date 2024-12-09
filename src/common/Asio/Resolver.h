@@ -21,7 +21,9 @@
 #include "IoContext.h"
 #include "Optional.h"
 #include <boost/asio/ip/tcp.hpp>
-#include <string>
+#include <algorithm>
+#include <string_view>
+#include <vector>
 
 namespace Trinity
 {
