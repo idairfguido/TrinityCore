@@ -46,8 +46,16 @@ namespace boost
 
             typedef basic_endpoint<tcp> tcp_endpoint;
         }
+#if BOOST_VERSION >= 107000
+        class executor;
+        namespace ip
+        {
+            template <typename InternetProtocol, typename Executor>
+            class basic_resolver;
 
-#if BOOST_VERSION >= 106600
+            typedef basic_resolver<tcp, executor> tcp_resolver;
+        }
+#elif BOOST_VERSION >= 106600
         template <typename Time, typename TimeTraits>
         class basic_deadline_timer;
 
@@ -59,7 +67,7 @@ namespace boost
             class basic_resolver;
 
             typedef basic_resolver<tcp> tcp_resolver;
-    }
+        }
 #else
         template <typename TimeType, typename TimeTraits>
         class deadline_timer_service;
