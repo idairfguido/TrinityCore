@@ -2,7 +2,6 @@
 
 ## Apply changes based on the following commits
 
-- [ ] [Commit 6989141 - jackpoz authored and Shauren committed on Dec 18, 2021](https://github.com/TrinityCore/TrinityCore/commit/6989141e71cd035e029ad4866530d53a0337872f) - Core/Misc: Fix linux build
 - [ ] [Commit 163c487 - Gooyeth authored and Shauren committed on Jan 9, 2019](https://github.com/idairfguido/TrinityCore/commit/163c487be7e60ab0488dade3e3170c9b7b9b5f68#diff-9548ad5730e018dba61771500dfc778592a20e2bc587d475f7669ed2be7cfc66L437) - Common: Replace ip2nation by ip2location
 - [ ] [Commit bcda8dd - Shauren committed on Apr 13, 2019](https://github.com/idairfguido/TrinityCore/commit/bcda8dd7421cfa1950a3e47081f2f28d032d38ac) - Core/Dep: Boost 1.70 compatibility
 - [ ] [Commit 74a8011 - Shauren committed on Jul 14, 2019](https://github.com/idairfguido/TrinityCore/commit/74a801182a39358d62b596642c82c5f6c6e242e9) - Core/PacketIO: Updated packet encryption
@@ -15,6 +14,7 @@
 - [ ] [Commit e9392ad - Treeston authored and Shauren committed on Aug 3, 2020](https://github.com/idairfguido/TrinityCore/commit/e9392ad28767626e519c463e2110184d71ba8426) - Core/Authserver: Authserver cleanup (PR#25093)
 - [ ] [Commit 98939d2 - Shauren committed on Dec 12, 2020](https://github.com/idairfguido/TrinityCore/commit/98939d258aa013a6ab1040e08e4ac1d1ac56e909) - Dep/Boost: Partial support for boost 1.74 -
 - [ ] [Commit 9c15407 - Shauren committed on Dec 18, 2021](https://github.com/TrinityCore/TrinityCore/commit/9c154074ed6c16640ce60a8e3ff28cc06f341442) - Dep: Inherit C++ language version from CMake
+- [ ] [Commit 6989141 - jackpoz authored and Shauren committed on Dec 18, 2021](https://github.com/TrinityCore/TrinityCore/commit/6989141e71cd035e029ad4866530d53a0337872f) - Core/Misc: Fix linux build
 - [ ] [Commit 172e5c35 - Shauren committed on Dec 20, 2021](https://github.com/idairfguido/TrinityCore/commit/172e5c3577f99331743f7d3c81de738811781552#diff-7c1fa8c03a5b889e4989171c0ae177c5f8451897ffda38644c3fecbeed749646) - Dep/gSOAP: Upgrade to 2.8.117
 - [ ] [Commit fe489e2 - jackpoz authored and Shauren committed on Dec 20, 2021](https://github.com/TrinityCore/TrinityCore/commit/fe489e2be1312bc559d0c38691c9741ad69cfec8) - Build: Enable and require c++17 (#23868)
 - [ ] [Commit 2c78f4d - Shauren committed on Dec 21, 2021](https://github.com/TrinityCore/TrinityCore/commit/2c78f4dd1f52200e7061b809bb472dbcd499962e) - Core/Misc: Resolve c++17 TODOs left in code as comments
