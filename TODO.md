@@ -9,7 +9,7 @@
 - [x] [Commit 74a8011 - Shauren committed on Jul 14, 2019](https://github.com/idairfguido/TrinityCore/commit/74a801182a39358d62b596642c82c5f6c6e242e9) - Core/PacketIO: Updated packet encryption
 - [x] [Commit ce1091c - Shauren committed on Jul 14, 2019](https://github.com/TrinityCore/TrinityCore/commit/ce1091cf880d449ab41e171724680b8112b9319a) - Fix build for openssl 1.0
 - [x] [Commit 3bb26a0 - Shauren committed on Jul 16, 2019](https://github.com/TrinityCore/TrinityCore/commit/3bb26a04f2ceb8b302f4727ed1487f190aaba51b) - Core/PacketIO: Fix sending uninitialized data
-- [ ] [Commit e8e89f5 - Shauren committed on Jul 26, 2019](https://github.com/idairfguido/TrinityCore/commit/e8e89f58fb800014f53341f12505f60ee2b5fb6f) - Core/DBLayer: Prevent using prepared statements on wrong database
+- [x] [Commit e8e89f5 - Shauren committed on Jul 26, 2019](https://github.com/idairfguido/TrinityCore/commit/e8e89f58fb800014f53341f12505f60ee2b5fb6f) - Core/DBLayer: Prevent using prepared statements on wrong database
 - [ ] [Commit f6e2b8c - Shauren committed on Jul 27, 2019](https://github.com/idairfguido/TrinityCore/commit/f6e2b8cdc1c8a3dd291947f67566b41dac116622) - Core/DBLayer: Prevent committing transactions started on a different database
 - [ ] [Commit d131bd1 - ariel- authored and Shauren committed on Aug 17, 2019](https://github.com/idairfguido/TrinityCore/commit/d131bd1da0bf1b835ef912713dd7444361aa0089) - Core/Database: Prepared statement parameter preallocation (TrinityCore#18999)
 - [x] [Commit 2072258 - Shauren committed on Nov 1, 2019](https://github.com/idairfguido/TrinityCore/commit/2072258ef44e89e30256d529686ae2b8dc2b5f0d#diff-d0fcad7148692a88de31040e8ddd61d9a451c5d48f474eb8abaf708cd8939264R289) - Core/DBLayer: Escape mysql 8 keywords
