@@ -106,7 +106,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint32 petEntry, uint32 petnumber, bool c
 
     ObjectGuid::LowType ownerid = owner->GetGUID().GetCounter();
 
-    PreparedStatement* stmt;
+    CharacterDatabasePreparedStatement* stmt;
     PreparedQueryResult result;
 
     if (petnumber)
@@ -428,7 +428,7 @@ void Pet::SavePetToDB(PetSaveMode mode)
         trans = CharacterDatabase.BeginTransaction();
         // remove current data
 
-        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_PET_BY_ID);
+        CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_PET_BY_ID);
         stmt->setUInt32(0, m_charmInfo->GetPetNumber());
         trans->Append(stmt);
 
@@ -489,7 +489,7 @@ void Pet::DeleteFromDB(uint32 guidlow)
 {
     SQLTransaction trans = CharacterDatabase.BeginTransaction();
 
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_PET_BY_ID);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_PET_BY_ID);
     stmt->setUInt32(0, guidlow);
     trans->Append(stmt);
 
@@ -891,7 +891,7 @@ bool Guardian::InitStatsForLevel(uint8 petlevel)
         SetPowerType(POWER_ENERGY);
     else if (IsPetImp() || IsPetFelhunter() || IsPetVoidwalker() || IsPetSuccubus() || IsPetDoomguard() || IsPetFelguard()) // Warlock pets have energy (since 5.x)
         SetPowerType(POWER_ENERGY);
-    else 
+    else
         SetPowerType(POWER_MANA);
 
     // Damage
@@ -1084,7 +1084,7 @@ uint32 Pet::GetCurrentFoodBenefitLevel(uint32 itemlevel) const
 
 void Pet::_LoadSpellCooldowns()
 {
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PET_SPELL_COOLDOWN);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PET_SPELL_COOLDOWN);
     stmt->setUInt32(0, m_charmInfo->GetPetNumber());
     PreparedQueryResult cooldownsResult = CharacterDatabase.Query(stmt);
 
@@ -1097,7 +1097,7 @@ void Pet::_LoadSpellCooldowns()
 
 void Pet::_LoadSpells()
 {
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PET_SPELL);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PET_SPELL);
     stmt->setUInt32(0, m_charmInfo->GetPetNumber());
     PreparedQueryResult result = CharacterDatabase.Query(stmt);
 
@@ -1123,7 +1123,7 @@ void Pet::_SaveSpells(SQLTransaction& trans)
         if (itr->second.type == PETSPELL_FAMILY)
             continue;
 
-        PreparedStatement* stmt;
+        CharacterDatabasePreparedStatement* stmt;
 
         switch (itr->second.state)
         {
@@ -1171,7 +1171,7 @@ void Pet::_LoadAuras(uint32 timediff)
     SELECT casterGuid, spell, effectMask, effectIndex, amount, baseAmount FROM pet_aura_effect WHERE guid = ?
     */
 
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PET_AURA_EFFECT);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PET_AURA_EFFECT);
     stmt->setUInt32(0, m_charmInfo->GetPetNumber());
 
     ObjectGuid casterGuid, itemGuid;
@@ -1268,7 +1268,7 @@ void Pet::_LoadAuras(uint32 timediff)
 
 void Pet::_SaveAuras(SQLTransaction& trans)
 {
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PET_AURA_EFFECTS);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PET_AURA_EFFECTS);
     stmt->setUInt32(0, m_charmInfo->GetPetNumber());
     trans->Append(stmt);
 
@@ -1333,7 +1333,7 @@ bool Pet::addSpell(uint32 spellId, ActiveStates active /*= ACT_DECIDE*/, PetSpel
         {
             TC_LOG_ERROR("entities.pet", "Pet::addSpell: Non-existed in SpellStore spell #%u request, deleting for all pets in `pet_spell`.", spellId);
 
-            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_INVALID_PET_SPELL);
+            CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_INVALID_PET_SPELL);
 
             stmt->setUInt32(0, spellId);
 

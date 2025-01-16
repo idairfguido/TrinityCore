@@ -1107,7 +1107,7 @@ void Player::Update(uint32 p_time)
     if (GetSession()->m_muteTime && GetSession()->m_muteTime < now)
     {
         GetSession()->m_muteTime = 0;
-        PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_UPD_MUTE_TIME);
+        LoginDatabasePreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_UPD_MUTE_TIME);
         stmt->setInt64(0, 0); // Set the mute time to 0
         stmt->setString(1, "");
         stmt->setString(2, "");
@@ -2810,7 +2810,7 @@ void Player::AddNewMailDeliverTime(time_t deliver_time)
 
 void DeleteSpellFromAllPlayers(uint32 spellId)
 {
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_INVALID_SPELL_SPELLS);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_INVALID_SPELL_SPELLS);
     stmt->setUInt32(0, spellId);
     CharacterDatabase.Execute(stmt);
 }
@@ -3751,7 +3751,7 @@ void Player::DeleteFromDB(ObjectGuid playerguid, uint32 accountId, bool updateRe
     LeaveAllArenaTeams(playerguid);
 
     // the player was uninvited already on logout so just remove from group
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GROUP_MEMBER);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GROUP_MEMBER);
     stmt->setUInt64(0, guid);
     PreparedQueryResult resultGroup = CharacterDatabase.Query(stmt);
 
@@ -4144,7 +4144,7 @@ void Player::DeleteOldCharacters(uint32 keepDays)
 {
     TC_LOG_INFO("entities.player", "Player::DeleteOldCharacters: Deleting all characters which have been deleted %u days before...", keepDays);
 
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_OLD_CHARS);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_OLD_CHARS);
     stmt->setUInt32(0, uint32(time(nullptr) - time_t(keepDays * DAY)));
     PreparedQueryResult result = CharacterDatabase.Query(stmt);
 
@@ -4337,7 +4337,7 @@ void Player::KillPlayer()
 void Player::OfflineResurrect(ObjectGuid const& guid, SQLTransaction& trans)
 {
     Corpse::DeleteFromDB(guid, trans);
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
     stmt->setUInt16(0, uint16(AT_LOGIN_RESURRECT));
     stmt->setUInt64(1, guid.GetCounter());
     CharacterDatabase.ExecuteOrAppend(trans, stmt);
@@ -6588,7 +6588,7 @@ void Player::_LoadCurrency(PreparedQueryResult result)
 
 void Player::_SaveCurrency(SQLTransaction& trans)
 {
-    PreparedStatement* stmt;
+    CharacterDatabasePreparedStatement* stmt;
     for (PlayerCurrenciesMap::iterator itr = _currencyStorage.begin(); itr != _currencyStorage.end(); ++itr)
     {
         CurrencyTypesEntry const* entry = sCurrencyTypesStore.LookupEntry(itr->first);
@@ -6907,7 +6907,7 @@ void Player::SetInGuild(ObjectGuid::LowType guildId)
 
 ObjectGuid::LowType Player::GetGuildIdFromDB(ObjectGuid guid)
 {
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_MEMBER);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_MEMBER);
     stmt->setUInt64(0, guid.GetCounter());
     if (PreparedQueryResult result = CharacterDatabase.Query(stmt))
         return result->Fetch()[0].GetUInt64();
@@ -6917,7 +6917,7 @@ ObjectGuid::LowType Player::GetGuildIdFromDB(ObjectGuid guid)
 
 uint8 Player::GetRankFromDB(ObjectGuid guid)
 {
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_MEMBER);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_MEMBER);
     stmt->setUInt64(0, guid.GetCounter());
     if (PreparedQueryResult result = CharacterDatabase.Query(stmt))
         return result->Fetch()[1].GetUInt8();
@@ -6938,7 +6938,7 @@ void Player::SetInArenaTeam(uint32 ArenaTeamId, uint8 slot, uint8 type)
 
 uint32 Player::GetArenaTeamIdFromDB(ObjectGuid guid, uint8 type)
 {
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_ARENA_TEAM_ID_BY_PLAYER_GUID);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_ARENA_TEAM_ID_BY_PLAYER_GUID);
     stmt->setUInt64(0, guid.GetCounter());
     stmt->setUInt8(1, type);
     PreparedQueryResult result = CharacterDatabase.Query(stmt);
@@ -6953,7 +6953,7 @@ uint32 Player::GetArenaTeamIdFromDB(ObjectGuid guid, uint8 type)
 uint32 Player::GetZoneIdFromDB(ObjectGuid guid)
 {
     ObjectGuid::LowType guidLow = guid.GetCounter();
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_ZONE);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_ZONE);
     stmt->setUInt64(0, guidLow);
     PreparedQueryResult result = CharacterDatabase.Query(stmt);
 
@@ -6998,7 +6998,7 @@ uint32 Player::GetZoneIdFromDB(ObjectGuid guid)
 
 uint32 Player::GetLevelFromDB(ObjectGuid guid)
 {
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_LEVEL);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_LEVEL);
     stmt->setUInt64(0, guid.GetCounter());
     PreparedQueryResult result = CharacterDatabase.Query(stmt);
 
@@ -11795,7 +11795,7 @@ Item* Player::StoreNewItem(ItemPosCountVec const& pos, uint32 itemId, bool updat
             for (++itr; itr != allowedLooters.end(); ++itr)
                 ss << ' ' << *itr;
 
-            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_ITEM_BOP_TRADE);
+            CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_ITEM_BOP_TRADE);
             stmt->setUInt64(0, item->GetGUID().GetCounter());
             stmt->setString(1, ss.str());
             CharacterDatabase.Execute(stmt);
@@ -12391,7 +12391,7 @@ void Player::DestroyItem(uint8 bag, uint8 slot, bool update)
 
         if (pItem->HasFlag(ITEM_FIELD_FLAGS, ITEM_FIELD_FLAG_WRAPPED))
         {
-            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_GIFT);
+            CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_GIFT);
 
             stmt->setUInt64(0, pItem->GetGUID().GetCounter());
 
@@ -15186,7 +15186,7 @@ void Player::AddQuest(Quest const* quest, Object* questGiver)
     if (sWorld->getBoolConfig(CONFIG_QUEST_ENABLE_QUEST_TRACKER)) // check if Quest Tracker is enabled
     {
         // prepare Quest Tracker datas
-        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_QUEST_TRACK);
+        CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_QUEST_TRACK);
         stmt->setUInt32(0, quest_id);
         stmt->setUInt64(1, GetGUID().GetCounter());
         stmt->setString(2, GitRevision::GetHash());
@@ -15218,7 +15218,7 @@ void Player::CompleteQuest(uint32 quest_id)
     if (sWorld->getBoolConfig(CONFIG_QUEST_ENABLE_QUEST_TRACKER)) // check if Quest Tracker is enabled
     {
         // prepare Quest Tracker data
-        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_QUEST_TRACK_COMPLETE_TIME);
+        CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_QUEST_TRACK_COMPLETE_TIME);
         stmt->setUInt32(0, quest_id);
         stmt->setUInt64(1, GetGUID().GetCounter());
 
@@ -17513,7 +17513,7 @@ void Player::_LoadBGData(PreparedQueryResult result)
 
 bool Player::LoadPositionFromDB(uint32& mapid, float& x, float& y, float& z, float& o, bool& in_flight, ObjectGuid guid)
 {
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_POSITION);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_CHAR_POSITION);
     stmt->setUInt64(0, guid.GetCounter());
     PreparedQueryResult result = CharacterDatabase.Query(stmt);
 
@@ -17539,7 +17539,7 @@ void Player::SetHomebind(WorldLocation const& loc, uint32 areaId)
     m_homebindAreaId = areaId;
 
     // update sql homebind
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_PLAYER_HOMEBIND);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_PLAYER_HOMEBIND);
     stmt->setUInt16(0, m_homebindMapId);
     stmt->setUInt16(1, m_homebindAreaId);
     stmt->setFloat (2, m_homebindX);
@@ -17631,7 +17631,7 @@ bool Player::LoadFromDB(ObjectGuid guid, SQLQueryHolder *holder)
     if (ObjectMgr::CheckPlayerName(m_name, GetSession()->GetSessionDbcLocale()) != CHAR_NAME_SUCCESS ||
         (!GetSession()->HasPermission(rbac::RBAC_PERM_SKIP_CHECK_CHARACTER_CREATION_RESERVEDNAME) && sObjectMgr->IsReservedName(m_name)))
     {
-        PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
+        CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_ADD_AT_LOGIN_FLAG);
         stmt->setUInt16(0, uint16(AT_LOGIN_RENAME));
         stmt->setUInt64(1, guid.GetCounter());
         CharacterDatabase.Execute(stmt);
@@ -18865,7 +18865,7 @@ Item* Player::_LoadItem(SQLTransaction& trans, uint32 zoneId, uint32 timeDiff, F
         item = NewItemOrBag(proto);
         if (item->LoadFromDB(itemGuid, GetGUID(), fields, itemEntry))
         {
-            PreparedStatement* stmt;
+            CharacterDatabasePreparedStatement* stmt;
 
             // Do not allow to have item limited to another map/zone in alive state
             if (IsAlive() && item->IsLimitedToAnotherMapOrZone(GetMapId(), zoneId))
@@ -18985,7 +18985,7 @@ Item* Player::_LoadItem(SQLTransaction& trans, uint32 zoneId, uint32 timeDiff, F
 void Player::_LoadMailedItems(Mail* mail)
 {
     // data needs to be at first place for Item::LoadFromDB
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_MAILITEMS);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_MAILITEMS);
     stmt->setUInt32(0, mail->messageID);
     PreparedQueryResult result = CharacterDatabase.Query(stmt);
     if (!result)
@@ -19056,7 +19056,7 @@ void Player::_LoadMail()
 {
     m_mail.clear();
 
-    PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_MAIL);
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_MAIL);
     stmt->setUInt64(0, GetGUID().GetCounter());
     PreparedQueryResult result = CharacterDatabase.Query(stmt);
 
