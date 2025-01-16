@@ -15,29 +15,30 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PACKETCRYPT_H
-#define _PACKETCRYPT_H
+#ifndef Trinity_AES_h__
+#define Trinity_AES_h__
 
-#include "Cryptography/ARC4.h"
+#include "Define.h"
+#include <openssl/evp.h>
 
-class BigNumber;
-
-class TC_COMMON_API PacketCrypt
+namespace Trinity
 {
-    public:
-        PacketCrypt(uint32 rc4InitSize);
-        virtual ~PacketCrypt() { }
+namespace Crypto
+{
+class TC_COMMON_API AES
+{
+public:
+    AES(bool encrypting);
+    ~AES();
 
-        virtual void Init(BigNumber* K) = 0;
-        void DecryptRecv(uint8* data, size_t length);
-        void EncryptSend(uint8* data, size_t length);
+    void Init(uint8 const* key);
 
-        bool IsInitialized() const { return _initialized; }
+    bool Process(uint8 const* iv, uint8* data, std::size_t length, uint8* tag);
 
-    protected:
-        ARC4 _clientDecrypt;
-        ARC4 _serverEncrypt;
-        bool _initialized;
+private:
+    EVP_CIPHER_CTX* _ctx;
 };
+}
+}
 
-#endif // _PACKETCRYPT_H
+#endif // Trinity_AES_h__
