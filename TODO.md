@@ -12,7 +12,7 @@
 - [ ] [Commit aa64226 - Shauren committed on Nov 8, 2019](https://github.com/idairfguido/TrinityCore/commit/aa64226b64bcad428a3d6207b322a48f97d5cf42) - Core/Misc: Suppress openssl random generator uninitialized variable errors under valgrind
 - [x] [Commit e5b12a7 - Shauren committed on Apr 4, 2020](https://github.com/idairfguido/TrinityCore/commit/e5b12a76dcd3348ff5ddc3e79da4d4a9f6837351) - Build: Delete FindBoost.cmake and rely on the one that ships with cmake instead
 - [ ] [Commit e9392ad - Treeston authored and Shauren committed on Aug 3, 2020](https://github.com/idairfguido/TrinityCore/commit/e9392ad28767626e519c463e2110184d71ba8426) - Core/Authserver: Authserver cleanup (PR#25093)
-- [ ] [Commit 98939d2 - Shauren committed on Dec 12, 2020](https://github.com/idairfguido/TrinityCore/commit/98939d258aa013a6ab1040e08e4ac1d1ac56e909) - Dep/Boost: Partial support for boost 1.74 -
+- [x] [Commit 98939d2 - Shauren committed on Dec 12, 2020](https://github.com/idairfguido/TrinityCore/commit/98939d258aa013a6ab1040e08e4ac1d1ac56e909) - Dep/Boost: Partial support for boost 1.74 - asio
 - [ ] [Commit 9c15407 - Shauren committed on Dec 18, 2021](https://github.com/TrinityCore/TrinityCore/commit/9c154074ed6c16640ce60a8e3ff28cc06f341442) - Dep: Inherit C++ language version from CMake
 - [ ] [Commit 6989141 - jackpoz authored and Shauren committed on Dec 18, 2021](https://github.com/TrinityCore/TrinityCore/commit/6989141e71cd035e029ad4866530d53a0337872f) - Core/Misc: Fix linux build
 - [ ] [Commit 172e5c35 - Shauren committed on Dec 20, 2021](https://github.com/idairfguido/TrinityCore/commit/172e5c3577f99331743f7d3c81de738811781552#diff-7c1fa8c03a5b889e4989171c0ae177c5f8451897ffda38644c3fecbeed749646) - Dep/gSOAP: Upgrade to 2.8.117
