@@ -246,7 +246,7 @@ void WorldSocket::HandleSendAuthSession()
 
     WorldPackets::Auth::AuthChallenge challenge;
     memcpy(challenge.Challenge.data(), _serverChallenge.AsByteArray(16).get(), 16);
-    memcpy(challenge.DosChallenge.data(), dosChallenge.AsByteArray(32).get(), 32);
+    //memcpy(challenge.DosChallenge.data(), dosChallenge.AsByteArray(32).get(), 32);
     challenge.DosZeroBits = 1;
 
     SendPacketAndLogOpcode(*challenge.Write());
@@ -766,8 +766,8 @@ void WorldSocket::HandleAuthSessionCallback(std::shared_ptr<WorldPackets::Auth::
         return;
     }
 
-    if (IpLocationRecord* location = sIPLocation->GetData(address))
-        _ipCountry = location->country_code;
+    if (IpLocationRecord const* location = sIPLocation->GetLocationRecord(address))
+        _ipCountry = location->CountryCode;
 
     ///- Re-check ip locking (same check as in auth).
     if (account.BattleNet.IsLockedToIP)
