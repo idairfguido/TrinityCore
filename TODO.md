@@ -2,7 +2,8 @@
 
 ## Apply changes based on the following commits
 
-- [ ] [Commit 163c487 - Gooyeth authored and Shauren committed on Jan 9, 2019](https://github.com/idairfguido/TrinityCore/commit/163c487be7e60ab0488dade3e3170c9b7b9b5f68#diff-9548ad5730e018dba61771500dfc778592a20e2bc587d475f7669ed2be7cfc66L437) - Common: Replace ip2nation by ip2location
+- [x] [Commit 163c487 - Gooyeth authored and Shauren committed on Jan 9, 2019](https://github.com/idairfguido/TrinityCore/commit/163c487be7e60ab0488dade3e3170c9b7b9b5f68#diff-9548ad5730e018dba61771500dfc778592a20e2bc587d475f7669ed2be7cfc66L437) - Common: Replace ip2nation by ip2location
+- [x] [Commit 61532e9 - Jildor authored and Shauren committed on Jan 9, 2019](https://github.com/idairfguido/TrinityCore/commit/61532e9816f750ae1690f8d5fca92525d6297ab6) - Nopch fix (TrinityCore#22077)
 - [x] [Commit bcda8dd - Shauren committed on Apr 13, 2019](https://github.com/idairfguido/TrinityCore/commit/bcda8dd7421cfa1950a3e47081f2f28d032d38ac) - Core/Dep: Boost 1.70 compatibility
 - [ ] [Commit 74a8011 - Shauren committed on Jul 14, 2019](https://github.com/idairfguido/TrinityCore/commit/74a801182a39358d62b596642c82c5f6c6e242e9) - Core/PacketIO: Updated packet encryption
 - [ ] [Commit ce1091c - Shauren committed on Jul 14, 2019](https://github.com/TrinityCore/TrinityCore/commit/ce1091cf880d449ab41e171724680b8112b9319a) - Fix build for openssl 1.0
