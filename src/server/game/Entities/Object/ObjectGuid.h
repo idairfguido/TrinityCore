@@ -308,31 +308,33 @@ class TC_GAME_API ObjectGuid
         std::string ToString() const;
         std::size_t GetHash() const;
 
-    private:
-        static bool HasEntry(HighGuid high)
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::Null, int32> = 0> static ObjectGuid Create() { return ObjectGuidFactory::CreateNull(); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::Uniq, int32> = 0> static ObjectGuid Create(LowType id) { return ObjectGuidFactory::CreateUniq(id); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::Player, int32> = 0> static ObjectGuid Create(LowType dbId) { return ObjectGuidFactory::CreatePlayer(0, dbId); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::Item, int32> = 0> static ObjectGuid Create(LowType dbId) { return ObjectGuidFactory::CreateItem(0, dbId); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::WorldObject, int32> = 0> static ObjectGuid Create(uint16 mapId, uint32 entry, LowType counter) { return ObjectGuidFactory::CreateWorldObject(type, 0, 0, mapId, 0, entry, counter); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::WorldObject, int32> = 0> static ObjectGuid Create(uint8 subType, uint16 mapId, uint32 entry, LowType counter) { return ObjectGuidFactory::CreateWorldObject(type, subType, 0, mapId, 0, entry, counter); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::Transport, int32> = 0> static ObjectGuid Create(uint32 counter) { return ObjectGuidFactory::CreateTransport(type, counter); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::ClientActor, int32> = 0> static ObjectGuid Create(uint16 ownerType, uint16 ownerId, uint32 counter) { return ObjectGuidFactory::CreateClientActor(ownerType, ownerId, counter); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::ChatChannel, int32> = 0> static ObjectGuid Create(bool builtIn, bool trade, uint16 zoneId, uint8 factionGroupMask, LowType counter) { return ObjectGuidFactory::CreateChatChannel(0, builtIn, trade, zoneId, factionGroupMask, counter); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::Global, int32> = 0> static ObjectGuid Create(LowType dbId) { return ObjectGuidFactory::CreateGlobal(type, UI64LIT(0), dbId); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::Guild, int32> = 0> static ObjectGuid Create(LowType dbId) { return ObjectGuidFactory::CreateGuild(type, 0, dbId); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::MobileSession, int32> = 0> static ObjectGuid Create(uint16 arg1, LowType counter) { return ObjectGuidFactory::CreateMobileSession(0, arg1, counter); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::WebObj, int32> = 0> static ObjectGuid Create(uint8 arg1, uint8 arg2, LowType counter) { return ObjectGuidFactory::CreateWebObj(0, arg1, arg2, counter); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::LFGObject, int32> = 0> static ObjectGuid Create(uint8 arg1, uint8 arg2, uint8 arg3, uint8 arg4, bool arg5, uint8 arg6, LowType counter) { return ObjectGuidFactory::CreateLFGObject(arg1, arg2, arg3, arg4, arg5, arg6, counter); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::LFGList, int32> = 0> static ObjectGuid Create(uint8 arg1, LowType counter) { return ObjectGuidFactory::CreateLFGList(arg1, counter); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::Client, int32> = 0> static ObjectGuid Create(uint32 arg1, LowType counter) { return ObjectGuidFactory::CreateClient(type, 0, arg1, counter); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::ClubFinder, int32> = 0> static ObjectGuid Create(uint8 clubType, uint32 clubFinderId, LowType dbId) { return ObjectGuidFactory::CreateClubFinder(0, clubType, clubFinderId, dbId); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::ToolsClient, int32> = 0> static ObjectGuid Create(uint16 mapId, uint32 serverId, LowType counter) { return ObjectGuidFactory::CreateToolsClient(mapId, serverId, counter); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::WorldLayer, int32> = 0> static ObjectGuid Create(uint32 arg1, uint16 arg2, uint8 arg3, uint32 arg4) { return ObjectGuidFactory::CreateWorldLayer(arg1, arg2, arg3, arg4); }
+        template <HighGuid type, std::enable_if_t<ObjectGuidTraits<type>::Format::value == ObjectGuidFormatType::LMMLobby, int32> = 0> static ObjectGuid Create(uint32 arg2, uint8 arg3, uint8 arg4, LowType counter) { return ObjectGuidFactory::CreateLMMLobby(0, arg2, arg3, arg4, counter); }
+
+    protected:
+        ObjectGuid(uint64 high, uint64 low) : _data({{ low, high }})
         {
-            switch (high)
-            {
-                case HighGuid::GameObject:
-                case HighGuid::Creature:
-                case HighGuid::Pet:
-                case HighGuid::Vehicle:
-                default:
-                    return true;
-            }
         }
 
-        bool HasEntry() const { return HasEntry(GetHigh()); }
-
-        static ObjectGuid Global(HighGuid type, LowType counter);
-        static ObjectGuid RealmSpecific(HighGuid type, LowType counter);
-        static ObjectGuid MapSpecific(HighGuid type, uint8 subType, uint16 mapId, uint32 serverId, uint32 entry, LowType counter);
-
-        ObjectGuid(uint64 high, uint64 low) : _low(low), _high(high) { }
-        explicit ObjectGuid(uint32 const&) = delete;                 // no implementation, used to catch wrong type assignment
-
-        uint64 _low;
-        uint64 _high;
+        std::array<uint64, 2> _data = { };
 };
 
 #pragma pack(pop)
@@ -377,17 +379,105 @@ TC_GAME_API ByteBuffer& operator>>(ByteBuffer& buf, ObjectGuid&       guid);
 
 TC_GAME_API std::ostream& operator<<(std::ostream& stream, ObjectGuid const& guid);
 
-namespace std
+template<>
+struct std::hash<ObjectGuid>
 {
-    template<>
-    struct hash<ObjectGuid>
+    size_t operator()(ObjectGuid const& key) const noexcept
     {
-    public:
-        size_t operator()(ObjectGuid const& key) const noexcept
+        return key.GetHash();
+    }
+};
+
+namespace fmt
+{
+inline namespace v10
+{
+template <typename T, typename Char, typename Enable>
+struct formatter;
+
+template <>
+struct formatter<ObjectGuid, char, void>
+{
+    template <typename ParseContext>
+    constexpr auto parse(ParseContext& ctx) -> decltype(ctx.begin())
+    {
+        auto begin = ctx.begin(), end = ctx.end();
+        if (begin == end)
+            return begin;
+
+        if (*begin != '}')
+            throw std::invalid_argument("invalid type specifier");
+
+        return begin;
+    }
+
+    template <typename FormatContext>
+    auto format(ObjectGuid const& guid, FormatContext& ctx) const -> decltype(ctx.out());
+};
+}
+}
+
+namespace Trinity
+{
+    namespace Legacy
+    {
+        enum class TypeID
         {
-            return key.GetHash();
+            Object          = 0,
+            Item            = 1,
+            Container       = 2,
+            Unit            = 3,
+            Player          = 4,
+            GameObject      = 5,
+            DynamicObject   = 6,
+            Corpse          = 7,
+            AreaTrigger     = 8,
+            SceneObject     = 9,
+            Conversation    = 10,
+            Max
+        };
+
+        constexpr inline ::TypeID ConvertLegacyTypeID(TypeID legacyTypeID)
+        {
+            switch (legacyTypeID)
+            {
+                case TypeID::Object:
+                    return TYPEID_OBJECT;
+                case TypeID::Item:
+                    return TYPEID_ITEM;
+                case TypeID::Container:
+                    return TYPEID_CONTAINER;
+                case TypeID::Unit:
+                    return TYPEID_UNIT;
+                case TypeID::Player:
+                    return TYPEID_PLAYER;
+                case TypeID::GameObject:
+                    return TYPEID_GAMEOBJECT;
+                case TypeID::DynamicObject:
+                    return TYPEID_DYNAMICOBJECT;
+                case TypeID::Corpse:
+                    return TYPEID_CORPSE;
+                case TypeID::AreaTrigger:
+                    return TYPEID_AREATRIGGER;
+                case TypeID::SceneObject:
+                    return TYPEID_SCENEOBJECT;
+                case TypeID::Conversation:
+                    return TYPEID_CONVERSATION;
+                default:
+                    return TYPEID_OBJECT;
+            }
         }
-    };
+
+        constexpr inline TypeMask ConvertLegacyTypeMask(uint32 legacyTypeMask)
+        {
+            uint32 typeMask = 0;
+            for (TypeID i = TypeID::Object; i < TypeID::Max; i = TypeID(uint32(i) + 1))
+                if (legacyTypeMask & (1 << uint32(i)))
+                    typeMask |= 1u << ConvertLegacyTypeID(i);
+
+            return TypeMask(typeMask);
+        }
+    }
 }
 
 #endif // ObjectGuid_h__

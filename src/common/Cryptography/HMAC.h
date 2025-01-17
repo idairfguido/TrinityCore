@@ -46,23 +46,8 @@ namespace Trinity::Impl
                 return hash.GetDigest();
             }
 
-        private: // c++17
-            template <typename T>
-            static void UpdateData_OLDCPP(GenericHMAC& hash, T const& data)
-            {
-                hash.UpdateData(data);
-            }
-
-            template <typename T, typename... TRest>
-            static void UpdateData_OLDCPP(GenericHMAC& hash, T const& data, TRest&&... rest)
-            {
-                hash.UpdateData(data);
-                UpdateData_OLDCPP(hash, std::forward<TRest>(rest)...);
-            }
-
-        public:
-            template <typename Container, typename... Ts>
-            static auto GetDigestOf(Container const& seed, Ts&&... pack) -> /*std::enable_if_t<!(std::is_integral_v<std::decay_t<Ts>> || ...),*/ Digest/*>*/
+            template <typename Container, typename... Ts, std::enable_if_t<std::conjunction_v<std::negation<std::is_integral<Ts>>...>, int32> = 0>
+            static Digest GetDigestOf(Container const& seed, Ts&&... pack)
             {
                 GenericHMAC hash(seed);
                 UpdateData_OLDCPP(hash, std::forward<Ts>(pack)...);
