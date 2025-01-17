@@ -95,13 +95,14 @@ class TC_DATABASE_API MySQLConnection
 
         MYSQL* GetHandle()  { return m_Mysql; }
         MySQLPreparedStatement* GetPreparedStatement(uint32 index);
-        void PrepareStatement(uint32 index, const char* sql, ConnectionFlags flags);
+        void PrepareStatement(uint32 index, std::string const& sql, ConnectionFlags flags);
 
         virtual void DoPrepareStatements() = 0;
 
     protected:
-        std::vector<std::unique_ptr<MySQLPreparedStatement>> m_stmts; //! PreparedStatements storage
-        PreparedStatementMap                 m_queries;       //! Query storage
+        typedef std::vector<std::unique_ptr<MySQLPreparedStatement>> PreparedStatementContainer;
+
+        PreparedStatementContainer           m_stmts;         //! PreparedStatements storage
         bool                                 m_reconnecting;  //! Are we reconnecting?
         bool                                 m_prepareError;  //! Was there any error while preparing statements?
 
