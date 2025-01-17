@@ -2,11 +2,12 @@
 
 ## Apply changes based on the following commits
 
+- [ ] [Commit 0a779bd - Shauren committed on Nov 4, 2018](https://github.com/idairfguido/TrinityCore/commit/0a779bd791fb63b2fc1663206279c7eaa9c02c6f#diff-a350a76e048de76702629666138fda9a6eaf9af36f16ea79151fd10f95ed94be) - Core/PacketIO: Updated packet structures to 8.0.1
 - [x] [Commit 163c487 - Gooyeth authored and Shauren committed on Jan 9, 2019](https://github.com/idairfguido/TrinityCore/commit/163c487be7e60ab0488dade3e3170c9b7b9b5f68#diff-9548ad5730e018dba61771500dfc778592a20e2bc587d475f7669ed2be7cfc66L437) - Common: Replace ip2nation by ip2location. (TrinityCore#21957)
 - [x] [Commit 61532e9 - Jildor authored and Shauren committed on Jan 9, 2019](https://github.com/idairfguido/TrinityCore/commit/61532e9816f750ae1690f8d5fca92525d6297ab6) - Nopch fix (TrinityCore#22077)
 - [x] [Commit 50cfeb9 - Shauren committed on Jan 9, 2019](https://github.com/idairfguido/TrinityCore/commit/50cfeb9aa406b9f81a6aa51dcd87201e5f3bae1e#diff-9a56ffe4272b7c4e6be3ef910227dd84345d0183dbcbbe1b36189b550e58fb07) - Core/Misc: Improved ip2location code and set it to disabled by default
 - [x] [Commit bcda8dd - Shauren committed on Apr 13, 2019](https://github.com/idairfguido/TrinityCore/commit/bcda8dd7421cfa1950a3e47081f2f28d032d38ac) - Core/Dep: Boost 1.70 compatibility
-- [x] [Commit 74a8011 - Shauren committed on Jul 14, 2019](https://github.com/idairfguido/TrinityCore/commit/74a801182a39358d62b596642c82c5f6c6e242e9) - Core/PacketIO: Updated packet encryption
+- [x] [Commit 74a8011 - Shauren committed on Jul 14, 2019](https://github.com/idairfguido/TrinityCore/commit/74a801182a39358d62b596642c82c5f6c6e242e9) - Core/PacketIO: Updated packet encryption to 8.2
 - [x] [Commit ce1091c - Shauren committed on Jul 14, 2019](https://github.com/TrinityCore/TrinityCore/commit/ce1091cf880d449ab41e171724680b8112b9319a) - Fix build for openssl 1.0
 - [x] [Commit 3bb26a0 - Shauren committed on Jul 16, 2019](https://github.com/TrinityCore/TrinityCore/commit/3bb26a04f2ceb8b302f4727ed1487f190aaba51b) - Core/PacketIO: Fix sending uninitialized data
 - [x] [Commit e8e89f5 - Shauren committed on Jul 26, 2019](https://github.com/idairfguido/TrinityCore/commit/e8e89f58fb800014f53341f12505f60ee2b5fb6f) - Core/DBLayer: Prevent using prepared statements on wrong database
@@ -15,7 +16,9 @@
 - [x] [Commit 2072258 - Shauren committed on Nov 1, 2019](https://github.com/idairfguido/TrinityCore/commit/2072258ef44e89e30256d529686ae2b8dc2b5f0d#diff-d0fcad7148692a88de31040e8ddd61d9a451c5d48f474eb8abaf708cd8939264R289) - Core/DBLayer: Escape mysql 8 keywords
 - [x] [Commit c3a9d56 - Shauren committed on Nov 1, 2019](https://github.com/idairfguido/TrinityCore/commit/c3a9d56b56b665133707f587ecb1bd1c272f6911) - Core/DBLayer: Support using mysql 8
 - [x] [Commit aa64226 - Shauren committed on Nov 8, 2019](https://github.com/idairfguido/TrinityCore/commit/aa64226b64bcad428a3d6207b322a48f97d5cf42) - Core/Misc: Suppress openssl random generator uninitialized variable errors under valgrind
+- [ ] [Commit 462a10d - Shauren committed on Feb 17, 2020](https://github.com/idairfguido/TrinityCore/commit/462a10de17003631957b69e578e7e4c55ed1ef61) - Core/PacketIO: Updated packets to 8.3.0
 - [x] [Commit e5b12a7 - Shauren committed on Apr 4, 2020](https://github.com/idairfguido/TrinityCore/commit/e5b12a76dcd3348ff5ddc3e79da4d4a9f6837351) - Build: Delete FindBoost.cmake and rely on the one that ships with cmake instead
+- [ ] [Commit bab5fd8 - Carbenium authored on Jun 23, 2020](https://github.com/idairfguido/TrinityCore/commit/bab5fd87a34d92737e92d0850be05890a5ce8e24#diff-a350a76e048de76702629666138fda9a6eaf9af36f16ea79151fd10f95ed94be) - Core/Misc: Replace Trinity::make_unique with std (TrinityCore#24869)
 - [ ] [Commit e9392ad - Treeston authored and Shauren committed on Aug 3, 2020](https://github.com/idairfguido/TrinityCore/commit/e9392ad28767626e519c463e2110184d71ba8426) - Core/Authserver: Authserver cleanup (PR#25093)
 - [x] [Commit 98939d2 - Shauren committed on Dec 12, 2020](https://github.com/idairfguido/TrinityCore/commit/98939d258aa013a6ab1040e08e4ac1d1ac56e909) - Dep/Boost: Partial support for boost 1.74 - asio
 - [ ] [Commit 9c15407 - Shauren committed on Dec 18, 2021](https://github.com/TrinityCore/TrinityCore/commit/9c154074ed6c16640ce60a8e3ff28cc06f341442) - Dep: Inherit C++ language version from CMake
