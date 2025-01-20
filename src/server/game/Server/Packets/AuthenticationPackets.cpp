@@ -18,7 +18,8 @@
 #include "AuthenticationPackets.h"
 #include "BigNumber.h"
 #include "CharacterTemplateDataStore.h"
-#include "HmacHash.h"
+#include "CryptoHash.h"
+#include "HMAC.h"
 #include "ObjectMgr.h"
 #include "RSA.h"
 #include "Util.h"
@@ -279,41 +280,38 @@ WorldPackets::Auth::ConnectTo::ConnectTo() : ServerPacket(SMSG_CONNECT_TO, 8 + 4
 
 WorldPacket const* WorldPackets::Auth::ConnectTo::Write()
 {
-    HmacSha1 hmacHash(64, WherePacketHmac);
-    hmacHash.UpdateData(Payload.Where.data(), 16);
-    hmacHash.UpdateData((uint8* const)&Payload.Type, 1);
-    hmacHash.UpdateData((uint8* const)&Payload.Port, 2);
-    hmacHash.UpdateData((uint8* const)Haiku.c_str(), 71);
-    hmacHash.UpdateData(Payload.PanamaKey, 32);
-    hmacHash.UpdateData(PiDigits, 108);
-    hmacHash.UpdateData(&Payload.XorMagic, 1);
-    hmacHash.Finalize();
+    ByteBuffer whereBuffer;
+    whereBuffer << uint8(Payload.Where.Type);
+    switch (Payload.Where.Type)
+    {
+        case IPv4:
+            whereBuffer.append(Payload.Where.Address.V4.data(), Payload.Where.Address.V4.size());
+            break;
+        case IPv6:
+            whereBuffer.append(Payload.Where.Address.V6.data(), Payload.Where.Address.V6.size());
+            break;
+        case NamedSocket:
+            whereBuffer << Payload.Where.Address.Name.data();
+            break;
+        default:
+            break;
+    }
 
-    ByteBuffer payload;
-    payload << uint32(Payload.Adler32);
-    payload << uint8(Payload.Type);
-    payload.append(Payload.Where.data(), 16);
-    payload << uint16(Payload.Port);
-    payload.append(Haiku.data(), 71);
-    payload.append(Payload.PanamaKey, 32);
-    payload.append(PiDigits, 108);
-    payload << uint8(Payload.XorMagic);
-    payload.append(hmacHash.GetDigest(), hmacHash.GetLength());
+    uint32 type = Payload.Where.Type;
+    Trinity::Crypto::SHA256 hash;
+    hash.UpdateData(whereBuffer.contents(), whereBuffer.size());
+    hash.UpdateData(reinterpret_cast<uint8 const*>(&type), 4);
+    hash.UpdateData(reinterpret_cast<uint8 const*>(&Payload.Port), 2);
+    hash.Finalize();
 
-    uint32 rsaSize = ConnectToRSA->GetOutputSize();
-    if (payload.size() < rsaSize)
-        payload.resize(rsaSize);
+    ConnectToRSA->Sign(hash.GetDigest(), Payload.Signature.data(), Trinity::Crypto::RSA::SHA256{});
 
-    _worldPacket << uint64(Key);
+    _worldPacket.append(Payload.Signature.data(), Payload.Signature.size());
+    _worldPacket.append(whereBuffer);
+    _worldPacket << uint16(Payload.Port);
     _worldPacket << uint32(Serial);
-    size_t encryptedPayloadPos = _worldPacket.wpos();
-    _worldPacket.resize(_worldPacket.size() + rsaSize);
     _worldPacket << uint8(Con);
-
-    ConnectToRSA->Encrypt(payload.contents(), payload.size(),
-        _worldPacket.contents() + encryptedPayloadPos,
-        Trinity::Crypto::RSA::PrivateKey{},
-        Trinity::Crypto::RSA::NoPadding{});
+    _worldPacket << uint64(Key);
 
     return &_worldPacket;
 }

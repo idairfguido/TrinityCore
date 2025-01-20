@@ -15,35 +15,36 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _AUTH_SARC4_H
-#define _AUTH_SARC4_H
+#ifndef __GAMETIME_H
+#define __GAMETIME_H
 
 #include "Define.h"
-#include <array>
-#include <openssl/evp.h>
-#include "advstd.h" // data/size
 
-namespace Trinity
+#include <chrono>
+
+namespace GameTime
 {
-namespace Crypto
-{
-    class TC_COMMON_API ARC4
-    {
-        public:
-            ARC4();
-            ~ARC4();
+    // Server start time
+    TC_GAME_API time_t GetStartTime();
 
-            void Init(uint8 const* seed, size_t len);
-            template <typename Container>
-            void Init(Container const& c) { Init(advstd::data(c), advstd::size(c)); }
+    // Current server time (unix) in seconds
+    TC_GAME_API time_t GetGameTime();
 
-            void UpdateData(uint8* data, size_t len);
-            template <typename Container>
-            void UpdateData(Container& c) { UpdateData(advstd::data(c), advstd::size(c)); }
-        private:
-            EVP_CIPHER_CTX* _ctx;
-    };
-}
+    // Milliseconds since server start
+    TC_GAME_API uint32 GetGameTimeMS();
+
+    /// Current chrono system_clock time point
+    TC_GAME_API std::chrono::system_clock::time_point GetGameTimeSystemPoint();
+
+    /// Current chrono steady_clock time point
+    TC_GAME_API std::chrono::steady_clock::time_point GetGameTimeSteadyPoint();
+
+    /// Uptime (in secs)
+    TC_GAME_API uint32 GetUptime();
+
+    TC_GAME_API tm const* GetDateAndTime();
+
+    void UpdateGameTimers();
 }
 
 #endif

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -19,12 +18,12 @@
 #include "AccountMgr.h"
 #include "Config.h"
 #include "DatabaseEnv.h"
+#include "CryptoHash.h"
 #include "Log.h"
 #include "ObjectAccessor.h"
 #include "Player.h"
 #include "Realm.h"
 #include "ScriptMgr.h"
-#include "SHA1.h"
 #include "Util.h"
 #include "World.h"
 #include "WorldSession.h"
@@ -390,14 +389,7 @@ uint32 AccountMgr::GetCharactersCount(uint32 accountId)
 
 std::string AccountMgr::CalculateShaPassHash(std::string const& name, std::string const& password)
 {
-    SHA1Hash sha;
-    sha.Initialize();
-    sha.UpdateData(name);
-    sha.UpdateData(":");
-    sha.UpdateData(password);
-    sha.Finalize();
-
-    return ByteArrayToHexStr(sha.GetDigest(), sha.GetLength());
+    return ByteArrayToHexStr(Trinity::Crypto::SHA1::GetDigestOf(name, ":", password));
 }
 
 bool AccountMgr::IsBannedAccount(std::string const& name)

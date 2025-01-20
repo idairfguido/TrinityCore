@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -21,6 +20,7 @@
 
 #include "Define.h"
 #include "ByteConverter.h"
+#include <array>
 #include <string>
 #include <vector>
 #include <cstring>
@@ -462,6 +462,12 @@ class TC_SHARED_API ByteBuffer
             _rpos += len;
         }
 
+        template <size_t Size>
+        void read(std::array<uint8, Size>& arr)
+        {
+            read(arr.data(), Size);
+        }
+
         void ReadPackedUInt64(uint64& guid)
         {
             guid = 0;
@@ -551,6 +557,12 @@ class TC_SHARED_API ByteBuffer
         {
             if (!buffer.empty())
                 append(buffer.contents(), buffer.size());
+        }
+
+        template <size_t Size>
+        void append(std::array<uint8, Size> const& arr)
+        {
+            append(arr.data(), Size);
         }
 
         // can be used in SMSG_MONSTER_MOVE opcode

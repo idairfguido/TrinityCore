@@ -15,33 +15,19 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _AUTH_SARC4_H
-#define _AUTH_SARC4_H
+#ifndef TRINITY_CRYPTO_CONSTANTS_H
+#define TRINITY_CRYPTO_CONSTANTS_H
 
 #include "Define.h"
-#include <array>
-#include <openssl/evp.h>
-#include "advstd.h" // data/size
 
 namespace Trinity
 {
 namespace Crypto
 {
-    class TC_COMMON_API ARC4
+    struct Constants
     {
-        public:
-            ARC4();
-            ~ARC4();
-
-            void Init(uint8 const* seed, size_t len);
-            template <typename Container>
-            void Init(Container const& c) { Init(advstd::data(c), advstd::size(c)); }
-
-            void UpdateData(uint8* data, size_t len);
-            template <typename Container>
-            void UpdateData(Container& c) { UpdateData(advstd::data(c), advstd::size(c)); }
-        private:
-            EVP_CIPHER_CTX* _ctx;
+        static constexpr size_t SHA1_DIGEST_LENGTH_BYTES = 20;
+        static constexpr size_t SHA256_DIGEST_LENGTH_BYTES = 32;
     };
 }
 }

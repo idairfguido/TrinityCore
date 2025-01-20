@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -18,6 +18,7 @@
 #include "Session.h"
 #include "BattlenetRpcErrorCodes.h"
 #include "ByteConverter.h"
+#include "CryptoRandom.h"
 #include "DatabaseEnv.h"
 #include "Errors.h"
 #include "IPLocation.h"
@@ -386,9 +387,8 @@ uint32 Battlenet::Session::VerifyWebCredentials(std::string const& webCredential
         if (!_ipCountry.empty())
             logonResult.set_geoip_country(_ipCountry);
 
-        BigNumber k;
-        k.SetRand(8 * 64);
-        logonResult.set_session_key(k.AsByteArray(64).get(), 64);
+        std::array<uint8, 64> k = Trinity::Crypto::GetRandomBytes<64>();
+        logonResult.set_session_key(k.data(), 64);
 
         _authed = true;
 
