@@ -20,6 +20,7 @@
 
 #include "Define.h"
 #include "Realm.h"
+#include <array>
 #include <map>
 #include <vector>
 #include <unordered_set>

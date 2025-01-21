@@ -107,6 +107,8 @@ class TC_COMMON_API BigNumber
             return buf;
         }
 
+        std::unique_ptr<uint8[]> AsByteArray(int32 minSize = 0, bool littleEndian = true);
+
         std::string AsHexStr() const;
         std::string AsDecStr() const;
 
