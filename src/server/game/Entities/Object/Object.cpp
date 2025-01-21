@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -240,7 +239,7 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
         if (unit->GetVictim())
             flags |= UPDATEFLAG_HAS_TARGET;
 
-    ByteBuffer buf(0x400);
+    ByteBuffer buf(0x400, ByteBuffer::Reserve{});
     buf << uint8(updateType);
     buf << GetGUID();
     buf << uint8(m_objectTypeId);
@@ -267,15 +266,15 @@ void Object::SendUpdateToPlayer(Player* player)
 
 void Object::BuildValuesUpdateBlockForPlayer(UpdateData* data, Player* target) const
 {
-    ByteBuffer buf(500);
+    ByteBuffer buffer(500, ByteBuffer::Reserve{});
 
-    buf << uint8(UPDATETYPE_VALUES);
-    buf << GetGUID();
+    buffer << uint8(UPDATETYPE_VALUES);
+    buffer << GetGUID();
 
-    BuildValuesUpdate(UPDATETYPE_VALUES, &buf, target);
-    BuildDynamicValuesUpdate(UPDATETYPE_VALUES, &buf, target);
+    BuildValuesUpdate(UPDATETYPE_VALUES, &buffer, target);
+    BuildDynamicValuesUpdate(UPDATETYPE_VALUES, &buffer, target);
 
-    data->AddUpdateBlock(buf);
+    data->AddUpdateBlock(buffer);
 }
 
 void Object::BuildOutOfRangeUpdateBlock(UpdateData* data) const
