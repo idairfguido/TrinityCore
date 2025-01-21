@@ -21,6 +21,7 @@
 #include "Define.h"
 #include "Random.h"
 #include <algorithm>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
