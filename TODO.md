@@ -2,7 +2,7 @@
 
 ## Apply changes based on the following commits
 
-- [ ] [Commit 0a779bd - Shauren committed on Nov 4, 2018](https://github.com/idairfguido/TrinityCore/commit/0a779bd791fb63b2fc1663206279c7eaa9c02c6f#diff-a350a76e048de76702629666138fda9a6eaf9af36f16ea79151fd10f95ed94be) - Core/PacketIO: Updated packet structures to 8.0.1
+- [x] [Commit 0a779bd - Shauren committed on Nov 4, 2018](https://github.com/idairfguido/TrinityCore/commit/0a779bd791fb63b2fc1663206279c7eaa9c02c6f#diff-a350a76e048de76702629666138fda9a6eaf9af36f16ea79151fd10f95ed94be) - Core/PacketIO: Updated packet structures to 8.0.1
 - [x] [Commit 163c487 - Gooyeth authored and Shauren committed on Jan 9, 2019](https://github.com/idairfguido/TrinityCore/commit/163c487be7e60ab0488dade3e3170c9b7b9b5f68#diff-9548ad5730e018dba61771500dfc778592a20e2bc587d475f7669ed2be7cfc66L437) - Common: Replace ip2nation by ip2location. (TrinityCore#21957)
 - [x] [Commit 61532e9 - Jildor authored and Shauren committed on Jan 9, 2019](https://github.com/idairfguido/TrinityCore/commit/61532e9816f750ae1690f8d5fca92525d6297ab6) - Nopch fix (TrinityCore#22077)
 - [x] [Commit 50cfeb9 - Shauren committed on Jan 9, 2019](https://github.com/idairfguido/TrinityCore/commit/50cfeb9aa406b9f81a6aa51dcd87201e5f3bae1e#diff-9a56ffe4272b7c4e6be3ef910227dd84345d0183dbcbbe1b36189b550e58fb07) - Core/Misc: Improved ip2location code and set it to disabled by default
