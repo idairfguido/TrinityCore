@@ -22,7 +22,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "advstd.h" // data/size
 
 struct bignum_st;
 

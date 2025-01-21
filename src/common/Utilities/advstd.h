@@ -25,28 +25,9 @@
 // this namespace holds implementations of upcoming stdlib features that our c++ version doesn't have yet
 namespace advstd
 {
-    // C++17 std::size
-    template <typename C>
-    constexpr auto size(const C& c) { return c.size(); }
-
-    template <typename T, std::size_t N>
-    constexpr std::size_t size(const T(&)[N]) noexcept { return N; }
-
-    // C++17 std::data
-    template <typename C>
-    constexpr auto data(C& c) { return c.data(); }
-
-    template <typename C>
-    constexpr auto data(C const& c) { return c.data(); }
-
-    template <typename T, std::size_t N>
-    constexpr T* data(T(&a)[N]) noexcept { return a; }
-
-    template <typename T, std::size_t N>
-    constexpr T const* data(const T(&a)[N]) noexcept { return a; }
-
-    template <typename T>
-    constexpr T const* data(std::initializer_list<T> l) noexcept { return l.begin(); }
+    // C++20 std::remove_cvref_t
+    template <class T>
+    using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
 }
 
 #endif
