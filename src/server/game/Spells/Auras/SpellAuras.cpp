@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -170,11 +169,9 @@ void AuraApplication::BuildUpdatePacket(WorldPackets::Spells::AuraInfo& auraInfo
     if (remove)
         return;
 
-    auraInfo.AuraData = boost::in_place();
-
     Aura const* aura = GetBase();
 
-    WorldPackets::Spells::AuraDataInfo& auraData = auraInfo.AuraData.get();
+    WorldPackets::Spells::AuraDataInfo& auraData = auraInfo.AuraData.emplace();
     auraData.CastID = aura->GetCastGUID();
     auraData.SpellID = aura->GetId();
     auraData.SpellXSpellVisualID = aura->GetSpellXSpellVisualId();

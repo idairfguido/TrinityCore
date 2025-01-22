@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -97,7 +97,7 @@ WorldPacket const* WorldPackets::Pet::PetNameInvalid::Write()
 
     _worldPacket << uint8(RenameData.NewName.length());
 
-    _worldPacket.WriteBit(RenameData.DeclinedNames.is_initialized());
+    _worldPacket.WriteBit(RenameData.DeclinedNames.has_value());
     _worldPacket.FlushBits();
 
     if (RenameData.DeclinedNames)
@@ -126,7 +126,7 @@ void WorldPackets::Pet::PetRename::Read()
 
     if (_worldPacket.ReadBit())
     {
-        RenameData.DeclinedNames = boost::in_place();
+        RenameData.DeclinedNames.emplace();
         int32 count[MAX_DECLINED_NAME_CASES];
         for (int32 i = 0; i < MAX_DECLINED_NAME_CASES; i++)
             count[i] = _worldPacket.ReadBits(7);

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -518,7 +517,7 @@ void WorldSession::HandlePetRename(WorldPackets::Pet::PetRename& packet)
     ObjectGuid petguid = packet.RenameData.PetGUID;
 
     std::string name = packet.RenameData.NewName;
-    DeclinedName* declinedname = packet.RenameData.DeclinedNames.get_ptr();
+    Optional<DeclinedName> const& declinedname = packet.RenameData.DeclinedNames;
 
     Pet* pet = ObjectAccessor::GetPet(*_player, petguid);
                                                             // check it!
@@ -530,13 +529,13 @@ void WorldSession::HandlePetRename(WorldPackets::Pet::PetRename& packet)
     PetNameInvalidReason res = ObjectMgr::CheckPetName(name);
     if (res != PET_NAME_SUCCESS)
     {
-        SendPetNameInvalid(res, name, NULL);
+        SendPetNameInvalid(res, name, {});
         return;
     }
 
     if (sObjectMgr->IsReservedName(name))
     {
-        SendPetNameInvalid(PET_NAME_RESERVED, name, NULL);
+        SendPetNameInvalid(PET_NAME_RESERVED, name, {});
         return;
     }
 
@@ -554,7 +553,7 @@ void WorldSession::HandlePetRename(WorldPackets::Pet::PetRename& packet)
 
         if (!ObjectMgr::CheckDeclinedNames(wname, *declinedname))
         {
-            SendPetNameInvalid(PET_NAME_DECLENSION_DOESNT_MATCH_BASE_NAME, name, declinedname);
+            SendPetNameInvalid(PET_NAME_DECLENSION_DOESNT_MATCH_BASE_NAME, name, {});
             return;
         }
     }
@@ -715,13 +714,12 @@ void WorldSession::HandlePetCastSpellOpcode(WorldPackets::Spells::PetCastSpell& 
     }
 }
 
-void WorldSession::SendPetNameInvalid(uint32 error, const std::string& name, DeclinedName *declinedName)
+void WorldSession::SendPetNameInvalid(uint32 error, const std::string& name, Optional<DeclinedName> const& declinedName)
 {
     WorldPackets::Pet::PetNameInvalid petNameInvalid;
     petNameInvalid.Result = error;
     petNameInvalid.RenameData.NewName = name;
-    if (declinedName)
-        petNameInvalid.RenameData.DeclinedNames = *declinedName;
+    petNameInvalid.RenameData.DeclinedNames = declinedName;
 
     SendPacket(petNameInvalid.Write());
 }

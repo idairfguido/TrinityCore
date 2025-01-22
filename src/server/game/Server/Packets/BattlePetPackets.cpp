@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -44,7 +44,7 @@ ByteBuffer& operator<<(ByteBuffer& data, WorldPackets::BattlePet::BattlePet cons
     data << uint32(pet.Speed);
     data << uint8(pet.Quality);
     data.WriteBits(pet.Name.size(), 7);
-    data.WriteBit(pet.OwnerInfo.is_initialized());
+    data.WriteBit(pet.OwnerInfo.has_value());
     data.WriteBit(pet.Name.empty()); // NoRename
     data.FlushBits();
 

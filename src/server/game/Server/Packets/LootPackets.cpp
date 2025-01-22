@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -128,8 +128,8 @@ WorldPacket const* WorldPackets::Loot::LootList::Write()
     _worldPacket << Owner;
     _worldPacket << LootObj;
 
-    _worldPacket.WriteBit(Master.is_initialized());
-    _worldPacket.WriteBit(RoundRobinWinner.is_initialized());
+    _worldPacket.WriteBit(Master.has_value());
+    _worldPacket.WriteBit(RoundRobinWinner.has_value());
 
     _worldPacket.FlushBits();
 

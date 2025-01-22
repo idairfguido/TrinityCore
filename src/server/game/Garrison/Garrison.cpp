@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -76,7 +76,7 @@ bool Garrison::LoadFromDB(PreparedQueryResult garrison, PreparedQueryResult blue
             if (!sGarrBuildingStore.LookupEntry(buildingId))
                 continue;
 
-            plot->BuildingInfo.PacketInfo = boost::in_place();
+            plot->BuildingInfo.PacketInfo.emplace();
             plot->BuildingInfo.PacketInfo->GarrPlotInstanceID = plotInstanceId;
             plot->BuildingInfo.PacketInfo->GarrBuildingID = buildingId;
             plot->BuildingInfo.PacketInfo->TimeBuilt = timeBuilt;
@@ -555,7 +555,7 @@ void Garrison::SendInfo()
         Plot& plot = p.second;
         garrison.Plots.push_back(&plot.PacketInfo);
         if (plot.BuildingInfo.PacketInfo)
-            garrison.Buildings.push_back(plot.BuildingInfo.PacketInfo.get_ptr());
+            garrison.Buildings.push_back(&*plot.BuildingInfo.PacketInfo);
     }
 
     for (auto const& p : _followers)
@@ -812,7 +812,7 @@ void Garrison::Plot::ClearBuildingInfo(Player* owner)
     plotPlaced.PlotInfo = &PacketInfo;
     owner->SendDirectMessage(plotPlaced.Write());
 
-    BuildingInfo.PacketInfo = boost::none;
+    BuildingInfo.PacketInfo.reset();
 }
 
 void Garrison::Plot::SetBuildingInfo(WorldPackets::Garrison::GarrisonBuildingInfo const& buildingInfo, Player* owner)
