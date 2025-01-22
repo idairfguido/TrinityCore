@@ -41,7 +41,7 @@ class TC_COMMON_API BigNumber
         void SetQword(uint64);
         void SetBinary(uint8 const* bytes, int32 len);
         template <typename Container>
-        void SetBinary(Container const& c) { SetBinary(advstd::data(c), advstd::size(c)); }
+        void SetBinary(Container const& c) { SetBinary(std::data(c), std::size(c)); }
         bool SetHexStr(char const* str);
         bool SetHexStr(std::string const& str) { return SetHexStr(str.c_str()); }
 
