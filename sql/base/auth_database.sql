@@ -29,7 +29,7 @@ CREATE TABLE `account` (
   `sessionkey` varchar(128) NOT NULL DEFAULT '',
   `v` varchar(64) NOT NULL DEFAULT '',
   `s` varchar(64) NOT NULL DEFAULT '',
-  `token_key` varchar(100) NOT NULL DEFAULT '',
+  `totp_secret` varbinary(128) DEFAULT NULL,
   `email` varchar(255) NOT NULL DEFAULT '',
   `reg_mail` varchar(255) NOT NULL DEFAULT '',
   `joindate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -1261,6 +1261,9 @@ INSERT INTO `rbac_linked_permissions` VALUES
 (199,223),
 (199,225),
 (199,263),
+(199,378),
+(199,379),
+(199,380),
 (199,496),
 (199,501),
 (199,507),
@@ -1522,14 +1525,10 @@ INSERT INTO `rbac_permissions` VALUES
 (375,'Command: gm list'),
 (376,'Command: gm visible'),
 (377,'Command: go'),
-(378,'Command: go creature'),
-(379,'Command: go graveyard'),
-(380,'Command: go grid'),
-(381,'Command: go object'),
-(382,'Command: go taxinode'),
-(384,'Command: go trigger'),
-(385,'Command: go xyz'),
-(386,'Command: go zonexy'),
+(378,'Command: account 2fa'),
+(379,'Command: account 2fa setup'),
+(380,'Command: account 2fa remove'),
+(381,'Command: account set 2fa'),
 (387,'Command: gobject'),
 (388,'Command: gobject activate'),
 (389,'Command: gobject add'),
@@ -2044,6 +2043,26 @@ INSERT INTO `realmlist` VALUES
 UNLOCK TABLES;
 
 --
+-- Table structure for table `secret_digest`
+--
+DROP TABLE IF EXISTS `secret_digest`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `secret_digest` (
+  `id` int(10) unsigned not null,
+  `digest` varchar(100) not null,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+/*!40101 SET character_set_client = @saved_cs_client */;
+--
+-- Dumping data for table `secret_digest`
+--
+LOCK TABLES `secret_digest` WRITE;
+/*!40000 ALTER TABLE `secret_digest` DISABLE KEYS */;
+/*!40000 ALTER TABLE `secret_digest` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `updates`
 --
 
@@ -2067,6 +2086,8 @@ CREATE TABLE `updates` (
 LOCK TABLES `updates` WRITE;
 /*!40000 ALTER TABLE `updates` DISABLE KEYS */;
 INSERT INTO `updates` VALUES
+('2019_08_10_00_auth.sql','E936802893474BB9B459D01BB5F181F54EDF0653','ARCHIVED','2019-08-10 00:00:00',0),
+('2019_08_10_01_auth.sql','C58357260F0C70DA226A71F7E05DE2C49AAEFD74','ARCHIVED','2019-08-10 00:00:00',0),
 ('2014_10_04_00_auth.sql','C3BC70A6EC381474B7308F442346F1E721176BC6','ARCHIVED','2015-03-21 16:55:52',0),
 ('2014_10_19_00_auth.sql','7472B490A4F86C9D3DA609CDD3197499CB80C87C','ARCHIVED','2015-03-21 16:55:52',0),
 ('2014_10_26_00_auth.sql','75CC67ADE2A3B2E54FD57D6B0DCAA8FE50F4EE35','ARCHIVED','2015-03-21 16:55:52',0),
