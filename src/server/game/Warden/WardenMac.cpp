@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -19,6 +18,7 @@
 #include "WardenMac.h"
 #include "ByteBuffer.h"
 #include "Common.h"
+#include "CryptoHash.h"
 #include "GameTime.h"
 #include "Log.h"
 #include "Opcodes.h"
@@ -29,7 +29,7 @@
 #include "WorldPacket.h"
 #include "WorldSession.h"
 
-#include <openssl/md5.h>
+#include <array>
 
 WardenMac::WardenMac() : Warden() { }
 
@@ -81,10 +81,7 @@ ClientWardenModule* WardenMac::GetModuleForClient()
     memcpy(mod->Key, Module_0DBBF209A27B1E279A9FEC5C168A15F7_Key, 16);
 
     // md5 hash
-    MD5_CTX ctx;
-    MD5_Init(&ctx);
-    MD5_Update(&ctx, mod->CompressedData, len);
-    MD5_Final((uint8*)&mod->Id, &ctx);
+    std::array<uint8, 16> ourMD5Hash = Trinity::Crypto::MD5::GetDigestOf(mod->CompressedData, len);
 
     return mod;
 }
@@ -251,16 +248,11 @@ void WardenMac::HandleData(ByteBuffer &buff)
         //found = true;
     }
 
-    MD5_CTX ctx;
-    MD5_Init(&ctx);
-    MD5_Update(&ctx, str.c_str(), str.size());
-    uint8 ourMD5Hash[16];
-    MD5_Final(ourMD5Hash, &ctx);
-
+    std::array<uint8, 16> ourMD5Hash = Trinity::Crypto::MD5::GetDigestOf(str);
     uint8 theirsMD5Hash[16];
     buff.read(theirsMD5Hash, 16);
 
-    if (memcmp(ourMD5Hash, theirsMD5Hash, 16) != 0)
+    if (memcmp(ourMD5Hash.data(), theirsMD5Hash, 16) != 0)
     {
         TC_LOG_DEBUG("warden", "Handle data failed: MD5 hash is wrong!");
         //found = true;
