@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -117,7 +116,15 @@ enum TrinityStrings
     LANG_GOINFO_SIZE                    = 84,
     LANG_GOINFO_ADDON                   = 85,
     LANG_GOINFO_MODEL                   = 86,
-    // Free 87 - 95
+    LANG_UNKNOWN_ERROR                  = 87,
+    LANG_2FA_COMMANDS_NOT_SETUP         = 88,
+    LANG_2FA_ALREADY_SETUP              = 89,
+    LANG_2FA_INVALID_TOKEN              = 90,
+    LANG_2FA_SECRET_SUGGESTION          = 91,
+    LANG_2FA_SETUP_COMPLETE             = 92,
+    LANG_2FA_NOT_SETUP                  = 93,
+    LANG_2FA_REMOVE_NEED_TOKEN          = 94,
+    LANG_2FA_REMOVE_COMPLETE            = 95,
 
 
     LANG_GUILD_RENAME_ALREADY_EXISTS    = 96,
