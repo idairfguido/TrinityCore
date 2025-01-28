@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -20,6 +20,7 @@
 
 #include "Define.h"
 #include "DatabaseEnvFwd.h"
+#include <array>
 #include <vector>
 
 enum class DatabaseFieldTypes : uint8
@@ -93,6 +94,13 @@ class TC_DATABASE_API Field
         char const* GetCString() const;
         std::string GetString() const;
         std::vector<uint8> GetBinary() const;
+        template <size_t S>
+        std::array<uint8, S> GetBinary() const
+        {
+            std::array<uint8, S> buf;
+            GetBinarySizeChecked(buf.data(), S);
+            return buf;
+        }
 
         bool IsNull() const
         {
@@ -141,6 +149,8 @@ class TC_DATABASE_API Field
         void SetMetadata(MySQLField* field, uint32 fieldIndex);
         Metadata meta;
         #endif
+
+        void GetBinarySizeChecked(uint8* buf, size_t size) const;
 };
 
 #endif

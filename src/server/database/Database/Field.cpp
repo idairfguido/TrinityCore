@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -16,6 +16,7 @@
  */
 
 #include "Field.h"
+#include "Errors.h"
 #include "Log.h"
 
 Field::Field()
@@ -247,6 +248,12 @@ std::vector<uint8> Field::GetBinary() const
     result.resize(data.length);
     memcpy(result.data(), data.value, data.length);
     return result;
+}
+
+void Field::GetBinarySizeChecked(uint8* buf, size_t length) const
+{
+    ASSERT(data.value && (data.length == length), "Expected %zu-byte binary blob, got %sdata (%u bytes) instead", length, data.value ? "" : "no ", data.length);
+    memcpy(buf, data.value, length);
 }
 
 void Field::SetByteValue(void* newValue, DatabaseFieldTypes newType, uint32 length)
