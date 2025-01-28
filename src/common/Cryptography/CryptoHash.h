@@ -58,7 +58,7 @@ namespace Trinity::Impl
                 return hash.GetDigest();
             }
             template <typename... Ts>
-            static auto GetDigestOf(Ts&&... pack) -> std::enable_if_t<std::conjunction_v<std::negation<std::is_integral<Ts>>...>, Digest>
+            static auto GetDigestOf(Ts&&... pack) -> std::enable_if_t<std::conjunction<std::negation<std::is_integral<Ts>>...>::value, Digest>
             {
                 GenericHash hash;
                 (hash.UpdateData(std::forward<Ts>(pack)), ...);

@@ -884,7 +884,7 @@ void WorldSession::ProcessQueryCallbacks()
         HandlePlayerLogin(reinterpret_cast<LoginQueryHolder*>(_charLoginCallback.get()));
 }
 
-void WorldSession::InitWarden(std::array<uint8, 40> const& k)
+void WorldSession::InitWarden(SessionKey const& k)
 {
     if (_os == "Win")
     {

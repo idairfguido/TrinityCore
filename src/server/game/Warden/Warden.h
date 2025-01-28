@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -20,6 +19,7 @@
 #define _WARDEN_BASE_H
 
 #include "ARC4.h"
+#include "AuthDefines.h"
 #include "ByteBuffer.h"
 #include "WardenCheckMgr.h"
 #include <array>
@@ -100,7 +100,7 @@ class TC_GAME_API Warden
         Warden();
         virtual ~Warden();
 
-        virtual void Init(WorldSession* session, std::array<uint8, 40> const& K) = 0;
+        virtual void Init(WorldSession* session, SessionKey const& K) = 0;
         virtual ClientWardenModule* GetModuleForClient() = 0;
         virtual void InitializeModule() = 0;
         virtual void RequestHash() = 0;

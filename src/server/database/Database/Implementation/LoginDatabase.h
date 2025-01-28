@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+  * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -38,7 +38,7 @@ enum LoginDatabaseStatements : uint32
     LOGIN_DEL_ACCOUNT_BANNED,
     LOGIN_UPD_ACCOUNT_INFO_CONTINUED_SESSION,
     LOGIN_SEL_ACCOUNT_INFO_CONTINUED_SESSION,
-    LOGIN_UPD_VS,
+    LOGIN_UPD_SV,
     LOGIN_SEL_ACCOUNT_ID_BY_NAME,
     LOGIN_SEL_ACCOUNT_LIST_BY_NAME,
     LOGIN_SEL_ACCOUNT_INFO_BY_NAME,
