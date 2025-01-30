@@ -45,7 +45,7 @@ struct CommandArgsConsumerSingle
 
 struct CommandArgsVariantConsumer
 {
-    template <typename V, typename T1, typename T2, typename... Ts>
+    template <typename V, typename T1, typename... Ts>
     static char const* TryConsumeTo(V& val, char const* args)
     {
         T1 v;
@@ -54,21 +54,8 @@ struct CommandArgsVariantConsumer
             val = std::move(v);
             return next;
         }
-        else
-            return TryConsumeTo<V, T2, Ts...>(val, args);
-    }
-
-    template <typename V, typename T1>
-    static char const* TryConsumeTo(V& val, char const* args)
-    {
-        T1 v;
-        if (char const* next = CommandArgsConsumerSingle<T1>::TryConsumeTo(v, args))
-        {
-            val = std::move(v);
-            return next;
-        }
-        else
-            return nullptr;
+        else if constexpr (sizeof...(Ts) > 0)
+            return TryConsumeTo<V, Ts...>(val, args);
     }
 };
 
@@ -118,7 +105,7 @@ struct CommandArgsConsumerMulti
     static char const* TryConsumeTo(Tuple& tuple, char const* args)
     {
         if (char const* next = CommandArgsConsumerSingle<NextType>::TryConsumeTo(std::get<offset>(tuple), args))
-            return CommandArgsConsumerNext<Tuple, offset>::GoNext(tuple, next);
+            return CommandArgsConsumerNext<Tuple, offset+1>::GoNext(tuple, next);
         else
             return nullptr;
     }
@@ -133,11 +120,11 @@ struct CommandArgsConsumerMulti<Tuple, Optional<NestedNextType>, offset>
         auto& myArg = std::get<offset>(tuple);
         myArg.emplace();
         if (char const* next = CommandArgsConsumerSingle<NestedNextType>::TryConsumeTo(*(myArg.get_ptr()), args))
-            if ((next = CommandArgsConsumerNext<Tuple, offset>::GoNext(tuple, next)))
+            if ((next = CommandArgsConsumerNext<Tuple, offset+1>::GoNext(tuple, next)))
                 return next;
         // try again omitting the argument
         myArg = boost::none;
-        if (char const* next = CommandArgsConsumerNext<Tuple, offset>::GoNext(tuple, args))
+        if (char const* next = CommandArgsConsumerNext<Tuple, offset+1>::GoNext(tuple, args))
             return next;
         return nullptr;
     }
@@ -148,13 +135,13 @@ struct CommandArgsConsumerNext<std::tuple<Ts...>, offset>
 {
     using tuple_type = std::tuple<Ts...>;
 
-    template <bool C = (offset + 1 < sizeof...(Ts))>
+    template <bool C = (offset < sizeof...(Ts))>
     static std::enable_if_t<C, char const*> GoNext(tuple_type& tuple, char const* args)
     {
-        return CommandArgsConsumerMulti<tuple_type, std::tuple_element_t<offset + 1, tuple_type>, offset + 1>::TryConsumeTo(tuple, args);
+        return CommandArgsConsumerMulti<tuple_type, std::tuple_element_t<offset, tuple_type>, offset>::TryConsumeTo(tuple, args);
     }
 
-    template <bool C = (offset + 1 < sizeof...(Ts))>
+    template <bool C = (offset < sizeof...(Ts))>
     static std::enable_if_t<!C, char const*> GoNext(tuple_type&, char const* args)
     {
         return args;
@@ -192,7 +179,7 @@ class TC_GAME_API CommandArgs
         template <size_t offset = 0, typename T>
         bool TryConsumeToTuple(T& tuple)
         {
-            if (char const* next = CommandArgsConsumerMulti<T, std::tuple_element_t<offset, T>, offset>::TryConsumeTo(tuple, _args))
+            if (char const* next = CommandArgsConsumerNext<T, offset>::GoNext(tuple, _args))
             {
                 _args = next;
                 return true;
@@ -214,7 +201,7 @@ class TC_GAME_API CommandArgs
         char const* _args;
 };
 
-template <typename T> struct ChatCommandHandlerToTuple { static_assert(!advstd::is_same_v<T,T>, "Invalid command handler signature"); };
+template <typename T> struct ChatCommandHandlerToTuple { static_assert(!std::is_same_v<T,T>, "Invalid command handler signature"); };
 template <typename... Ts> struct ChatCommandHandlerToTuple<bool(*)(ChatHandler*, Ts...)> { using type = std::tuple<ChatHandler*, advstd::remove_cvref_t<Ts>...>; };
 
 template <typename T> struct ChatCommandStoreLastArg { static void store(T&, CommandArgs&) {} };
@@ -240,9 +227,9 @@ class TC_GAME_API ChatCommand
                 CommandArgs args(argsStr);
                 if (args.TryConsumeToTuple<1>(arguments))
                 {
-                    auto& last = std::get<advstd::tuple_size_v<tuple_type>-1>(arguments);
+                    auto& last = std::get<std::tuple_size_v<tuple_type>-1>(arguments);
                     ChatCommandStoreLastArg<advstd::remove_cvref_t<decltype(last)>>::store(last, args);
-                    return advstd::apply(reinterpret_cast<TypedHandler>(handler), std::move(arguments));
+                    return std::apply(reinterpret_cast<TypedHandler>(handler), std::move(arguments));
                 }
                 else
                     return false;
