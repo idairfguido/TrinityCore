@@ -305,6 +305,8 @@ TC_COMMON_API void HexStrToByteArray(std::string const& str, uint8* out, bool re
 TC_COMMON_API bool StringToBool(std::string const& str);
 TC_COMMON_API float DegToRad(float degrees);
 
+TC_COMMON_API bool StringContainsStringI(std::string const& haystack, std::string const& needle);
+
 template<class Container>
 std::string StringJoin(Container const& c, std::string delimiter)
 {

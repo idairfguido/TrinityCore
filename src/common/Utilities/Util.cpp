@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -22,6 +21,8 @@
 #include <utf8.h>
 #include <algorithm>
 #include <sstream>
+#include <string>
+#include <cctype>
 #include <cstdarg>
 #include <ctime>
 
@@ -572,6 +573,12 @@ bool StringToBool(std::string const& str)
     std::string lowerStr = str;
     std::transform(str.begin(), str.end(), lowerStr.begin(), [](char c) { return char(::tolower(c)); });
     return lowerStr == "1" || lowerStr == "true" || lowerStr == "yes";
+}
+
+bool StringContainsStringI(std::string const& haystack, std::string const& needle)
+{
+    return haystack.end() !=
+        std::search(haystack.begin(), haystack.end(), needle.begin(), needle.end(), [](char c1, char c2) { return std::toupper(c1) == std::toupper(c2); });
 }
 
 float DegToRad(float degrees)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -36,6 +36,8 @@ EndScriptData */
 #include "RBAC.h"
 #include "WorldSession.h"
 
+using namespace Trinity::ChatCommands;
+
 class tele_commandscript : public CommandScript
 {
 public:
@@ -58,16 +60,11 @@ public:
         return commandTable;
     }
 
-    static bool HandleTeleAddCommand(ChatHandler* handler, const char* args)
+    static bool HandleTeleAddCommand(ChatHandler* handler, std::string const& name)
     {
-        if (!*args)
-            return false;
-
         Player* player = handler->GetSession()->GetPlayer();
         if (!player)
             return false;
-
-        std::string name = args;
 
         if (sObjectMgr->GetGameTeleExactName(name))
         {
@@ -98,13 +95,8 @@ public:
         return true;
     }
 
-    static bool HandleTeleDelCommand(ChatHandler* handler, const char* args)
+    static bool HandleTeleDelCommand(ChatHandler* handler, GameTele const* tele)
     {
-        if (!*args)
-            return false;
-
-         // id, or string, or [name] Shift-click form |color|Htele:id|h[name]|h|r
-        GameTele const* tele = handler->extractGameTeleFromLink((char*)args);
         if (!tele)
         {
             handler->SendSysMessage(LANG_COMMAND_TELE_NOTFOUND);
@@ -215,10 +207,14 @@ public:
     }
 
     //Teleport group to given game_tele.entry
-    static bool HandleTeleGroupCommand(ChatHandler* handler, const char* args)
+    static bool HandleTeleGroupCommand(ChatHandler* handler, GameTele const* tele)
     {
-        if (!*args)
+        if (!tele)
+        {
+            handler->SendSysMessage(LANG_COMMAND_TELE_NOTFOUND);
+            handler->SetSentErrorMessage(true);
             return false;
+        }
 
         Player* target = handler->getSelectedPlayer();
         if (!target)
@@ -231,15 +227,6 @@ public:
         // check online security
         if (handler->HasLowerSecurity(target, ObjectGuid::Empty))
             return false;
-
-        // id, or string, or [name] Shift-click form |color|Htele:id|h[name]|h|r
-        GameTele const* tele = handler->extractGameTeleFromLink((char*)args);
-        if (!tele)
-        {
-            handler->SendSysMessage(LANG_COMMAND_TELE_NOTFOUND);
-            handler->SetSentErrorMessage(true);
-            return false;
-        }
 
         MapEntry const* map = sMapStore.LookupEntry(tele->mapId);
         if (!map || map->IsBattlegroundOrArena())
@@ -298,16 +285,8 @@ public:
         return true;
     }
 
-    static bool HandleTeleCommand(ChatHandler* handler, const char* args)
+    static bool HandleTeleCommand(ChatHandler* handler, GameTele const* tele)
     {
-        if (!*args)
-            return false;
-
-        Player* me = handler->GetSession()->GetPlayer();
-
-        // id, or string, or [name] Shift-click form |color|Htele:id|h[name]|h|r
-        GameTele const* tele = handler->extractGameTeleFromLink((char*)args);
-
         if (!tele)
         {
             handler->SendSysMessage(LANG_COMMAND_TELE_NOTFOUND);
@@ -331,16 +310,12 @@ public:
         }
 
         // stop flight if need
-        if (me->IsInFlight())
-        {
-            me->GetMotionMaster()->MovementExpired();
-            me->CleanupAfterTaxiFlight();
-        }
-        // save only in non-flight case
+        if (player->IsInFlight())
+            player->FinishTaxiFlight();
         else
-            me->SaveRecallPosition();
+            player->SaveRecallPosition(); // save only in non-flight case
 
-        me->TeleportTo(tele->mapId, tele->position_x, tele->position_y, tele->position_z, tele->orientation);
+        player->TeleportTo(tele->mapId, tele->position_x, tele->position_y, tele->position_z, tele->orientation);
         return true;
     }
 };

@@ -15,20 +15,23 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TRINITY_ADVSTD_H
-#define TRINITY_ADVSTD_H
+#include "ChatCommandArgs.h"
+#include "ChatCommand.h"
+#include "ChatCommandHyperlinks.h"
+#include "ObjectMgr.h"
 
-#include <cstddef>
-#include <initializer_list>
-#include <type_traits>
-#include <utility>
+using namespace Trinity::ChatCommands;
 
-// this namespace holds implementations of upcoming stdlib features that our c++ version doesn't have yet
-namespace advstd
+struct GameTeleVisitor
 {
-    // C++20 std::remove_cvref_t
-    template <class T>
-    using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
+    using value_type = GameTele const*;
+    value_type operator()(Hyperlink<tele> tele) const { return sObjectMgr->GetGameTele(tele); }
+    value_type operator()(std::string const& tele) const { return sObjectMgr->GetGameTele(tele); }
+};
+char const* Trinity::ChatCommands::ArgInfo<GameTele const*>::TryConsume(GameTele const*& data, char const* args)
+{
+    Variant<Hyperlink<tele>, std::string> val;
+    if ((args = CommandArgsConsumerSingle<decltype(val)>::TryConsumeTo(val, args)))
+        data = boost::apply_visitor(GameTeleVisitor(), val);
+    return args;
 }
-
-#endif
