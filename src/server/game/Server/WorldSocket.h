@@ -60,6 +60,11 @@ struct PacketHeader
     bool IsValidSize() { return Size < 0x10000; }
 };
 
+struct IncomingPacketHeader : PacketHeader
+{
+    uint16 EncryptedOpcode;
+};
+
 #pragma pack(pop)
 
 class TC_GAME_API WorldSocket : public Socket<WorldSocket>
@@ -142,6 +147,7 @@ private:
     std::mutex _worldSessionLock;
     WorldSession* _worldSession;
     bool _authed;
+    bool _canRequestHotfixes;
 
     MessageBuffer _headerBuffer;
     MessageBuffer _packetBuffer;
