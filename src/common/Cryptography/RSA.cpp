@@ -306,7 +306,6 @@ OSSL_DISPATCH const HMAC_SHA256_method[] =
     { 0, nullptr },
 };
 #endif
-}
 
 namespace Trinity::Crypto
 {
