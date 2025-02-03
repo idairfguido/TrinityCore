@@ -46,6 +46,7 @@ void OpenSSLCrypto::threadsCleanup()
     OSSL_PROVIDER_unload(DefaultProvider);
     OSSL_PROVIDER_set_default_search_path(nullptr, nullptr);
 #endif
+}
 
 #ifdef VALGRIND
 #include <openssl/rand.h>
