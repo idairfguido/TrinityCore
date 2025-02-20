@@ -260,27 +260,3 @@ bool DynamicMapTree::getAreaInfo(float x, float y, float& z, PhaseShift const& p
     }
     return false;
 }
-<<<<<<< HEAD
-=======
-
-void DynamicMapTree::getAreaAndLiquidData(float x, float y, float z, PhaseShift const& phaseShift, uint8 reqLiquidType, VMAP::AreaAndLiquidData& data) const
-{
-    G3D::Vector3 v(x, y, z + 0.5f);
-    DynamicTreeLocationInfoCallback intersectionCallBack(phaseShift);
-    impl->intersectPoint(v, intersectionCallBack);
-    if (intersectionCallBack.GetLocationInfo().hitModel)
-    {
-        data.floorZ = intersectionCallBack.GetLocationInfo().ground_Z;
-        uint32 liquidType = intersectionCallBack.GetLocationInfo().hitModel->GetLiquidType();
-        float liquidLevel;
-        if (!reqLiquidType || (dynamic_cast<VMAP::VMapManager2*>(VMAP::VMapFactory::createOrGetVMapManager())->GetLiquidFlagsPtr(liquidType) & reqLiquidType))
-            if (intersectionCallBack.GetHitModel()->GetLiquidLevel(v, intersectionCallBack.GetLocationInfo(), liquidLevel))
-                data.liquidInfo.emplace(liquidType, liquidLevel);
-
-        data.areaInfo.emplace(intersectionCallBack.GetHitModel()->GetNameSetId(),
-            intersectionCallBack.GetLocationInfo().rootId,
-            intersectionCallBack.GetLocationInfo().hitModel->GetWmoID(),
-            intersectionCallBack.GetLocationInfo().hitModel->GetMogpFlags());
-    }
-}
->>>>>>> 770fbcca0c (Core/Misc: Replace boost::optional with std::optional (#25047))
