@@ -38,13 +38,10 @@ target_include_directories(proto
   PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR})
 
-<<<<<<< HEAD
-=======
 set_target_properties(proto
   PROPERTIES
     DEFINE_SYMBOL TRINITY_API_EXPORT_PROTO)
 
->>>>>>> ab5fab5ee9 (Build: Fixed CMake 3.30 FindBoost deprecation warning)
 target_link_libraries(proto
   PRIVATE
     trinity-default-interface

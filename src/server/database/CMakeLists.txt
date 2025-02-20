@@ -45,13 +45,9 @@ target_include_directories(database
   PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR})
 
-<<<<<<< HEAD
-add_definitions(-DTRINITY_API_EXPORT_DATABASE)
-=======
 set_target_properties(database
   PROPERTIES
     DEFINE_SYMBOL TRINITY_API_EXPORT_DATABASE)
->>>>>>> ab5fab5ee9 (Build: Fixed CMake 3.30 FindBoost deprecation warning)
 
 target_link_libraries(database
   PRIVATE

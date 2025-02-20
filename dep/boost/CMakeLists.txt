@@ -33,13 +33,6 @@ if(WIN32)
   set(Boost_USE_STATIC_RUNTIME     OFF)
 endif()
 
-<<<<<<< HEAD
-set(Boost_NO_WARN_NEW_VERSIONS ON)
-
-include (CheckCXXSourceCompiles)
-
-=======
->>>>>>> ab5fab5ee9 (Build: Fixed CMake 3.30 FindBoost deprecation warning)
 if (WIN32)
   # On windows the requirements are higher according to the wiki.
   set(BOOST_REQUIRED_VERSION 1.78)
@@ -47,9 +40,6 @@ else()
   set(BOOST_REQUIRED_VERSION 1.74)
 endif()
 
-<<<<<<< HEAD
-find_package(Boost ${BOOST_REQUIRED_VERSION} REQUIRED system filesystem program_options iostreams regex)
-=======
 find_package(Boost ${BOOST_REQUIRED_VERSION}
   REQUIRED
   COMPONENTS 
@@ -62,7 +52,6 @@ find_package(Boost ${BOOST_REQUIRED_VERSION}
   CONFIG
   HINTS
     ${BOOST_SEARCH_HINTS})
->>>>>>> ab5fab5ee9 (Build: Fixed CMake 3.30 FindBoost deprecation warning)
 
 if(NOT Boost_FOUND)
   if(NOT DEFINED ENV{BOOST_ROOT} AND NOT DEFINED Boost_DIR AND NOT DEFINED BOOST_ROOT AND NOT DEFINED BOOSTROOT)
