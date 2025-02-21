@@ -115,7 +115,7 @@ class TC_COMMON_API BigNumber
         bool IsNegative() const;
 
         BigNumber ModExp(BigNumber const& bn1, BigNumber const& bn2);
-        BigNumber Exp(BigNumber const&);
+        BigNumber Exp(BigNumber const&) const;
 
         int32 GetNumBytes(void) const;
 
