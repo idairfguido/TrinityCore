@@ -128,7 +128,7 @@ namespace Trinity::Impl
             void UpdateData(std::string const& str) { UpdateData(str.c_str()); } /* explicit overload to avoid using the container template */
             void UpdateData(char const* str) { UpdateData(reinterpret_cast<uint8 const*>(str), strlen(str)); } /* explicit overload to avoid using the container template */
             template <typename Container>
-            void UpdateData(Container const& c) { UpdateData(advstd::data(c), advstd::size(c)); }
+            void UpdateData(Container const& c) { UpdateData(std::data(c), std::size(c)); }
 
             void Finalize()
             {

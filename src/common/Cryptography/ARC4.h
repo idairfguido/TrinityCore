@@ -34,11 +34,11 @@ namespace Crypto
 
             void Init(uint8 const* seed, size_t len);
             template <typename Container>
-            void Init(Container const& c) { Init(std::data(c), std::size(c)); }
+            void Init(Container const& c) { Init(c.data(), c.size()); }
 
             void UpdateData(uint8* data, size_t len);
             template <typename Container>
-            void UpdateData(Container& c) { UpdateData(std::data(c), std::size(c)); }
+            void UpdateData(Container& c) { UpdateData(c.data(), c.size()); }
         private:
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
             EVP_CIPHER* _cipher;
