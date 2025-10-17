@@ -829,6 +829,10 @@ void WorldSession::SaveTutorialsData(SQLTransaction& trans)
     stmt->setUInt32(MAX_ACCOUNT_TUTORIAL_VALUES, GetAccountId());
     trans->Append(stmt);
 
+    // now has, set flag so next save uses update query
+    if (!hasTutorialsInDB)
+        _tutorialsChanged |= TUTORIALS_FLAG_LOADED_FROM_DB;
+
     _tutorialsChanged = false;
 }
 
