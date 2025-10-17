@@ -73,14 +73,15 @@ class TC_DATABASE_API MySQLConnection
         bool Execute(PreparedStatement* stmt);
         ResultSet* Query(const char* sql);
         PreparedResultSet* Query(PreparedStatement* stmt);
-        bool _Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD **pFields, uint64* pRowCount, uint32* pFieldCount);
-        bool _Query(PreparedStatement* stmt, MYSQL_RES **pResult, uint64* pRowCount, uint32* pFieldCount);
+        bool _Query(const char* sql, MySQLResult** pResult, MySQLField** pFields, uint64* pRowCount, uint32* pFieldCount);
+        bool _Query(PreparedStatementBase* stmt, MySQLResult** pResult, uint64* pRowCount, uint32* pFieldCount);
 
         void BeginTransaction();
         void RollbackTransaction();
         void CommitTransaction();
         int ExecuteTransaction(SQLTransaction& transaction);
 
+        size_t EscapeString(char* to, const char* from, size_t length);
         void Ping();
 
         uint32 GetLastError();
@@ -93,14 +94,14 @@ class TC_DATABASE_API MySQLConnection
         /// Called by parent databasepool. Will let other threads access this connection
         void Unlock();
 
-        MYSQL* GetHandle()  { return m_Mysql; }
+        uint32 GetServerVersion() const;
         MySQLPreparedStatement* GetPreparedStatement(uint32 index);
         void PrepareStatement(uint32 index, const char* sql, ConnectionFlags flags);
 
         virtual void DoPrepareStatements() = 0;
 
-    protected:
-        std::vector<std::unique_ptr<MySQLPreparedStatement>> m_stmts; //! PreparedStatements storage
+        typedef std::vector<std::unique_ptr<MySQLPreparedStatement>> PreparedStatementContainer;
+        PreparedStatementContainer           m_stmts;         //! PreparedStatements storage
         PreparedStatementMap                 m_queries;       //! Query storage
         bool                                 m_reconnecting;  //! Are we reconnecting?
         bool                                 m_prepareError;  //! Was there any error while preparing statements?
@@ -108,10 +109,9 @@ class TC_DATABASE_API MySQLConnection
     private:
         bool _HandleMySQLErrno(uint32 errNo, uint8 attempts = 5);
 
-    private:
         ProducerConsumerQueue<SQLOperation*>* m_queue;      //! Queue shared with other asynchronous connections.
         std::unique_ptr<DatabaseWorker> m_worker;           //! Core worker task.
-        MYSQL*                m_Mysql;                      //! MySQL Handle.
+        MySQLHandle*          m_Mysql;                      //! MySQL Handle.
         MySQLConnectionInfo&  m_connectionInfo;             //! Connection info (used for logging)
         ConnectionFlags       m_connectionFlags;            //! Connection flags (for preparing relevant statements)
         std::mutex            m_Mutex;
